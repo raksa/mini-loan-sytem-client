@@ -72,6 +72,7 @@ user name: {{$user->getFirstName()}} {{$user->getLastName()}}
                     <th>date contract end</th>
                     <th>last updated</th>
                     <th>created</th>
+                    <th>action</th>
                 </tr>
             </thead>
             <tbody>
@@ -87,6 +88,9 @@ user name: {{$user->getFirstName()}} {{$user->getLastName()}}
                     <td>{{$loan->getDateContractEnd()}}</td>
                     <td>{{$loan->getLastUpdatedTime()}}</td>
                     <td>{{$loan->getCreatedTime()}}</td>
+                    <td>
+                        <a href="{{route('repayments.get', $loan->getId())}}">Get Repayment</a>
+                    </td>
                 </tr>
             </tbody>
         </table>
