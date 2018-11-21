@@ -1,6 +1,7 @@
 <?php
 namespace App\Helpers;
 
+use App\Http\Middleware\AuthenticateAPIOnce;
 use Illuminate\Http\Request;
 
 /*
@@ -34,5 +35,20 @@ class Util
     {
         $salt = config('app.api_salt_key');
         return $salt;
+    }
+
+    /**
+     * This function help add authorization for api request
+     */
+    public static function addAPIAuthorizationHash($requestData, $dataIndex = '')
+    {
+        $salt = config('app.api_salt_key');
+        if (!isset($requestData['headers'])) {
+            $requestData['headers'] = [];
+        }
+        $data = isset($requestData[$dataIndex]) ? $requestData[$dataIndex] : [];
+        $hash = AuthenticateAPIOnce::dataToTokenHash($data, $salt);
+        $requestData['headers']['Authorization'] = AuthenticateAPIOnce::AUTH_HASH_PREFIX . $hash;
+        return $requestData;
     }
 }

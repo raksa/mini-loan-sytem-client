@@ -2,6 +2,9 @@
 
 return [
 
+    'api_salt_key' => env('API_SALT_KEY', ''),
+    'api_url' => env('API_URL', 'http://localhost'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Name

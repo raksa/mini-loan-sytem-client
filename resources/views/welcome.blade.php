@@ -71,7 +71,7 @@
                 </div>
 
                 <div class="links">
-                <a href="{{route('loans.get')}}">Loan</a>
+                <a href="{{route('loans.get')}}">Get Loans</a>
                 </div>
             </div>
         </div>

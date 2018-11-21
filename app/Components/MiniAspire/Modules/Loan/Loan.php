@@ -9,11 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 /*
  * Author: Raksa Eng
  */
-class Loan extends Model
+class Loan
 {
-
-    const TABLE_NAME = 'loans';
-
     const ID = 'id';
     const USER_ID = 'user_id';
     const AMOUNT = 'amount';
@@ -27,12 +24,29 @@ class Loan extends Model
     const LAST_UPDATED = 'last_updated';
     const CREATED = 'created';
 
-    // Disable default timestamp to easy control
-    public $timestamps = false;
+    public $repayments = [];
+    public $user = null;
 
-    protected $primaryKey = self::ID;
-
-    protected $table = self::TABLE_NAME;
+    public function __constructor($data)
+    {
+        if(isset($data['user'])){
+            $this->user = new User($data['user']);
+        }
+        foreach($data['repayments'] as $repaymentData) {
+            $this->repayments[] = new Repayment($repaymentData);
+        }
+        $this->{self::ID} = $data[self::ID];
+        $this->{self::USER_ID} = $data[self::USER_ID];
+        $this->{self::AMOUNT} = $data[self::AMOUNT];
+        $this->{self::DURATION} = $data[self::DURATION];
+        $this->{self::REPAYMENT_FREQUENCY} = $data[self::REPAYMENT_FREQUENCY];
+        $this->{self::INTEREST_RATE} = $data[self::INTEREST_RATE];
+        $this->{self::ARRANGEMENT_FEE} = $data[self::ARRANGEMENT_FEE];
+        $this->{self::REMARKS} = $data[self::REMARKS];
+        $this->{self::DATE_CONTRACT_START} = $data[self::DATE_CONTRACT_START];
+        $endDate = $this->getDateContractStart()->copy()->addMonth($this->getMonthsDuration());
+        $this->{self::DATE_CONTRACT_END} = $endDate;
+    }
 
     public function getId()
     {
@@ -78,49 +92,5 @@ class Loan extends Model
     public function getCreatedTime()
     {
         return new Carbon($this->{self::CREATED});
-    }
-
-    public function setProps($data)
-    {
-        $this->{self::USER_ID} = $data[self::USER_ID];
-        $this->{self::AMOUNT} = $data[self::AMOUNT];
-        $this->{self::DURATION} = $data[self::DURATION];
-        $this->{self::REPAYMENT_FREQUENCY} = $data[self::REPAYMENT_FREQUENCY];
-        $this->{self::INTEREST_RATE} = $data[self::INTEREST_RATE];
-        $this->{self::ARRANGEMENT_FEE} = $data[self::ARRANGEMENT_FEE];
-        $this->{self::REMARKS} = $data[self::REMARKS];
-        $this->{self::DATE_CONTRACT_START} = $data[self::DATE_CONTRACT_START];
-        $endDate = $this->getDateContractStart()->copy()->addMonth($this->getMonthsDuration());
-        $this->{self::DATE_CONTRACT_END} = $endDate;
-    }
-
-    /**
-     * Association one to many, one loan can belong to many repayments.
-     */
-    public function repayments()
-    {
-        return $this->hasMany(Repayment::class,
-            Repayment::LOAN_ID,
-            self::ID);
-    }
-
-    /**
-     * Association many to one, many loans can have same one user.
-     */
-    public function user()
-    {
-        return $this->hasOne(User::class,
-            User::ID,
-            self::USER_ID);
-    }
-
-    /**
-     * Filter loan as pagination
-     */
-    public static function filterLoan($data = [])
-    {
-        $result = self::orderBy(self::ID, 'desc');
-        $loans = $result->paginate($data['perPage']);
-        return $loans;
     }
 }
