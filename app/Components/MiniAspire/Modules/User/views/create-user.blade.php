@@ -29,7 +29,7 @@
         </div>
     {!! Form::close() !!}
 </div>
-
+<hr>
 <div>
     @if (isset($user))
         <table border="1">
@@ -43,6 +43,7 @@
                     <th>address</th>
                     <th>last updated</th>
                     <th>created</th>
+                    <th>action</th>
                 </tr>
             </thead>
             <tbody>
@@ -55,6 +56,11 @@
                     <td>{{$user->getAddress()}}</td>
                     <td>{{$user->getLastUpdatedTime()}}</td>
                     <td>{{$user->getCreatedTime()}}</td>
+                    <td>
+                        <a href="{{route('loans.get', $user->getId())}}">Go Get Loans</a>
+                        <br>
+                        <a href="{{route('loans.create', $user->getId())}}">Go Create Loan</a>
+                    </td>
                 </tr>
             </tbody>
         </table>
