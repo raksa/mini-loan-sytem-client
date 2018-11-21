@@ -27,7 +27,7 @@ class Loan
     public $repayments = [];
     public $user = null;
 
-    public function __constructor($data)
+    public function __construct($data)
     {
         if (isset($data['user'])) {
             $this->user = new User($data['user']);
@@ -126,5 +126,38 @@ class Loan
         }
         $bag = ['message' => $message];
         return [];
+    }
+
+    public static function getById(&$bag, User $user, $id)
+    {
+        $client = new \GuzzleHttp\Client();
+        $url = config('app.api_url') . "/api/v1/loans/get/" . $user->getId();
+        try {
+            $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
+                'json' => [
+                    'loanId' => $id,
+                ],
+            ], 'json'));
+            $status = $res->getStatusCode();
+            if ($status == 200) {
+                $body = $res->getBody();
+                $jsonResponse = \json_decode($body->getContents(), true);
+                $data = $jsonResponse['data'];
+                return new self($data);
+            }
+            $message = 'Error with status: ' . $status;
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            if ($e->hasResponse()) {
+                $res = $e->getResponse();
+                $body = $res->getBody();
+                $jsonResponse = \json_decode($body->getContents());
+                $message = $jsonResponse['message'];
+            }
+        } catch (\Exception $e) {
+            \Log::error($e);
+            $message = $e->getMessage();
+        }
+        $bag = ['message' => $message];
+        return null;
     }
 }

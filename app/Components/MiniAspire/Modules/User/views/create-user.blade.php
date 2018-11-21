@@ -35,14 +35,14 @@
         <table border="1">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>USER_CODE</th>
-                    <th>FIRST_NAME</th>
-                    <th>LAST_NAME</th>
-                    <th>PHONE_NUMBER</th>
-                    <th>ADDRESS</th>
-                    <th>LAST_UPDATED</th>
-                    <th>CREATED</th>
+                    <th>id</th>
+                    <th>user code</th>
+                    <th>first name</th>
+                    <th>last name</th>
+                    <th>phone number</th>
+                    <th>address</th>
+                    <th>last updated</th>
+                    <th>created</th>
                 </tr>
             </thead>
             <tbody>

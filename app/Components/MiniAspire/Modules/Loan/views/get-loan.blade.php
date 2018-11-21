@@ -22,16 +22,36 @@
 <div>
     <h1>Data</h1>
     <div>
-        <table>
+        <table border="1">
             <thead>
                 <tr>
-                    <th></th>
+                    <th>id</th>
+                    <th>amount</th>
+                    <th>duration</th>
+                    <th>repayment frequency</th>
+                    <th>interest rate</th>
+                    <th>arrangement fee</th>
+                    <th>remarks</th>
+                    <th>date contract start</th>
+                    <th>date contract end</th>
+                    <th>last updated</th>
+                    <th>created</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($loans as $loan)
                 <tr>
+                    <td>{{$loan->getId()}}</td>
                     <td>{{$loan->getAmount()}}</td>
+                    <td>{{$loan->getMonthsDuration()}}</td>
+                    <td>{{$loan->getRepaymentFrequencyTypeId()}}</td>
+                    <td>{{$loan->getMonthlyInterestRate()}}</td>
+                    <td>{{$loan->getArrangementFee()}}</td>
+                    <td>{{$loan->getRemarks()}}</td>
+                    <td>{{$loan->getDateContractStart()}}</td>
+                    <td>{{$loan->getDateContractEnd()}}</td>
+                    <td>{{$loan->getLastUpdatedTime()}}</td>
+                    <td>{{$loan->getCreatedTime()}}</td>
                 </tr>
                 @endforeach
             </tbody>

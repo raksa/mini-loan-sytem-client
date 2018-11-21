@@ -24,7 +24,6 @@ class LoanController extends Controller
      */
     public function getLoan(Request $request, $id)
     {
-        $request->session()->forget('error');
         $user = User::getById($bag, $id);
         if (!$user) {
             $request->session()->flash('error', $bag['message']);
@@ -82,7 +81,6 @@ class LoanController extends Controller
      */
     public function createLoan(Request $request, $id)
     {
-        $request->session()->forget('error');
         $user = User::getById($bag, $id);
         if (!$user) {
             $request->session()->flash('error', $bag['message']);
@@ -90,8 +88,10 @@ class LoanController extends Controller
                 'user' => null,
             ]);
         }
+        $loan = $request->has('loanId') ? Loan::getById($bag, $user, $request->get('loanId')) : null;
         return View::make($this->toViewFullPath('create-loan'), [
             'user' => $user,
+            'loan' => $loan,
             'freqTypes' => Loan::getFreqType($bag),
         ]);
     }
@@ -113,8 +113,10 @@ class LoanController extends Controller
             if ($status == 200) {
                 $body = $res->getBody();
                 $jsonResponse = \json_decode($body->getContents(), true);
-                return View::make($this->toViewFullPath('create-loan'), [
-                    'loan' => new Loan($jsonResponse['loan']),
+                $loan = new Loan($jsonResponse['loan']);
+                return redirect()->route('loans.create', [
+                    'id' => $id,
+                    'loanId' => $loan->getId(),
                 ]);
             }
         } catch (\GuzzleHttp\Exception\ClientException $e) {
@@ -129,6 +131,6 @@ class LoanController extends Controller
         } catch (\Exception $e) {
             \Log::error($e);
         }
-        return back()->with('error', 'Create fail', [])->withInput();
+        return back()->with('error', 'Create fail')->withInput();
     }
 }

@@ -57,8 +57,76 @@ user name: {{$user->getFirstName()}} {{$user->getLastName()}}
 @endif
 
 <hr>
+<div>
+    @if (isset($loan))
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>amount</th>
+                    <th>duration</th>
+                    <th>repayment frequency</th>
+                    <th>interest rate</th>
+                    <th>arrangement fee</th>
+                    <th>remarks</th>
+                    <th>date contract start</th>
+                    <th>date contract end</th>
+                    <th>last updated</th>
+                    <th>created</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{$loan->getId()}}</td>
+                    <td>{{$loan->getAmount()}}</td>
+                    <td>{{$loan->getMonthsDuration()}}</td>
+                    <td>{{$loan->getRepaymentFrequencyTypeId()}}</td>
+                    <td>{{$loan->getMonthlyInterestRate()}}</td>
+                    <td>{{$loan->getArrangementFee()}}</td>
+                    <td>{{$loan->getRemarks()}}</td>
+                    <td>{{$loan->getDateContractStart()}}</td>
+                    <td>{{$loan->getDateContractEnd()}}</td>
+                    <td>{{$loan->getLastUpdatedTime()}}</td>
+                    <td>{{$loan->getCreatedTime()}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <h2>Repayment</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>amount</th>
+                    <th>payment status</th>
+                    <th>due date</th>
+                    <th>date of payment</th>
+                    <th>remarks</th>
+                    <th>last updated</th>
+                    <th>created</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($loan->repayments as $repayment)
+                <tr>
+                    <td>{{$repayment->getId()}}</td>
+                    <td>${{$repayment->getAmount()}}</td>
+                    <td>{{$repayment->getPaymentStatus()}}</td>
+                    <td>{{$repayment->getDueDate()}}</td>
+                    <td>{{$repayment->getDateOfPayment()}}</td>
+                    <td>{{$repayment->getRemarks()}}</td>
+                    <td>{{$repayment->getLastUpdatedTime()}}</td>
+                    <td>{{$repayment->getCreatedTime()}}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    @endif
+</div>
+
+<hr>
 <a href="/">Home</a>
+&nbsp;&nbsp;<a href="{{route('users.get')}}">Get Users</a>
 @if (isset($user))
-&nbsp;&nbsp;<a href="{{route('loans.get', $user->getId())}}">Get Loans</a>
+    &nbsp;&nbsp;<a href="{{route('loans.get', $user->getId())}}">Get Loans</a>
 @endif
 @stop

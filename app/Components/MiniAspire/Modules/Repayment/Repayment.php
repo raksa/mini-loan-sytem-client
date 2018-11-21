@@ -57,6 +57,10 @@ class Repayment
     {
         return $this->{self::PAYMENT_STATUS};
     }
+    public function getPaymentStatus()
+    {
+        return RepaymentStatus::getPaymentStatusName($this->getPaymentStatusId());
+    }
     public function setPaymentStatusId($statusId)
     {
         $this->{self::PAYMENT_STATUS} = $statusId;
