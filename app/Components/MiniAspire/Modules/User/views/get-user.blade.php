@@ -8,7 +8,6 @@
 <h1>Get Users</h1>
 
 <a href="{{route('users.create')}}">Go Create User</a>
-&nbsp;&nbsp;<a href="{{route('repayments.get')}}">Get Repayments</a>
 &nbsp;&nbsp;<a href="/">Home</a>
 
 <div>

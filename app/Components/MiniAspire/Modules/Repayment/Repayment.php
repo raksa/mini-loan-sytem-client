@@ -24,13 +24,9 @@ class Repayment
     const CREATED = 'created';
 
     public $loan = null;
-    public $user = null;
 
     public function __construct($data)
     {
-        if (isset($data['user'])) {
-            $this->user = new User($data['user']);
-        }
         if (isset($data['loan'])) {
             $this->loan = new Loan($data['loan']);
         }

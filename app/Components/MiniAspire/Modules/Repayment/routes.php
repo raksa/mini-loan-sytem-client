@@ -4,6 +4,5 @@
  */
 
 $controller = "\App\Components\MiniAspire\Modules\Repayment\RepaymentController";
-Route::get('/repayments/get', $controller . '@getRepayment')->name('repayments.get');
-Route::get('/repayments/crate', $controller . '@createRepayment')->name('repayments.create');
-Route::post('/repayments/crate', $controller . '@doCreateRepayment')->name('repayments.create');
+Route::get('/repayments/get/{id}', $controller . '@getRepayment')->name('repayments.get');
+Route::post('/repayments/pay/{id}', $controller . '@doPayRepayment')->name('repayments.pay');

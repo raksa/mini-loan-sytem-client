@@ -88,7 +88,7 @@ class LoanController extends Controller
                 'user' => null,
             ]);
         }
-        $loan = $request->has('loanId') ? Loan::getById($bag, $user, $request->get('loanId')) : null;
+        $loan = $request->has('loanId') ? Loan::getById($bag, $request->get('loanId')) : null;
         return View::make($this->toViewFullPath('create-loan'), [
             'user' => $user,
             'loan' => $loan,

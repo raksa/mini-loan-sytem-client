@@ -9,7 +9,6 @@
 
 <a href="{{route('users.create')}}">Go Create User</a>
 &nbsp;&nbsp;<a href="{{route('users.get')}}">Get Users</a>
-&nbsp;&nbsp;<a href="{{route('repayments.get')}}">Get Repayments</a>
 &nbsp;&nbsp;<a href="/">Home</a>
 @if (isset($user))
     &nbsp;&nbsp;<a href="{{route('loans.create', $user->getId())}}">Go Create Loan</a>
@@ -36,6 +35,7 @@
                     <th>date contract end</th>
                     <th>last updated</th>
                     <th>created</th>
+                    <th>action</th>
                 </tr>
             </thead>
             <tbody>
@@ -52,6 +52,9 @@
                     <td>{{$loan->getDateContractEnd()}}</td>
                     <td>{{$loan->getLastUpdatedTime()}}</td>
                     <td>{{$loan->getCreatedTime()}}</td>
+                    <td>
+                    <a href="{{route('repayments.get', $loan->getId())}}">Get Repayment</a>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>

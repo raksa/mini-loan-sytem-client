@@ -25,13 +25,9 @@ class Loan
     const CREATED = 'created';
 
     public $repayments = [];
-    public $user = null;
 
     public function __construct($data)
     {
-        if (isset($data['user'])) {
-            $this->user = new User($data['user']);
-        }
         if (isset($data['repayments'])) {
             foreach ($data['repayments'] as $repaymentData) {
                 $this->repayments[] = new Repayment($repaymentData);
@@ -55,6 +51,10 @@ class Loan
     public function getId()
     {
         return $this->{self::ID};
+    }
+    public function getUserId()
+    {
+        return $this->{self::USER_ID};
     }
     public function getAmount()
     {
@@ -128,15 +128,13 @@ class Loan
         return [];
     }
 
-    public static function getById(&$bag, User $user, $id)
+    public static function getById(&$bag, $id)
     {
         $client = new \GuzzleHttp\Client();
-        $url = config('app.api_url') . "/api/v1/loans/get/" . $user->getId();
+        $url = config('app.api_url') . "/api/v1/loans/get/" . $id;
         try {
             $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
-                'json' => [
-                    'loanId' => $id,
-                ],
+                'json' => [],
             ], 'json'));
             $status = $res->getStatusCode();
             if ($status == 200) {
