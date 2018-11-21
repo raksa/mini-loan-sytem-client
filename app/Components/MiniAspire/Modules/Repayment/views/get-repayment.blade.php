@@ -42,11 +42,11 @@
                 <tbody>
                     <tr>
                         <td>{{$loan->getId()}}</td>
-                        <td>{{$loan->getAmount()}}</td>
-                        <td>{{$loan->getMonthsDuration()}}</td>
-                        <td>{{$loan->getRepaymentFrequencyTypeId()}}</td>
-                        <td>{{$loan->getMonthlyInterestRate()}}</td>
-                        <td>{{$loan->getArrangementFee()}}</td>
+                        <td>${{$loan->getAmount()}}</td>
+                        <td>{{$loan->getMonthsDuration()}}months</td>
+                        <td>{{$loan->getRepaymentFrequencyType()}}</td>
+                        <td>{{$loan->getMonthlyInterestRate()}}%</td>
+                        <td>${{$loan->getArrangementFee()}}</td>
                         <td>{{$loan->getRemarks()}}</td>
                         <td>{{$loan->getDateContractStart()}}</td>
                         <td>{{$loan->getDateContractEnd()}}</td>

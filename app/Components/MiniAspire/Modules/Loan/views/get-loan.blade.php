@@ -42,18 +42,18 @@
                 @foreach ($loans as $loan)
                 <tr>
                     <td>{{$loan->getId()}}</td>
-                    <td>{{$loan->getAmount()}}</td>
-                    <td>{{$loan->getMonthsDuration()}}</td>
-                    <td>{{$loan->getRepaymentFrequencyTypeId()}}</td>
-                    <td>{{$loan->getMonthlyInterestRate()}}</td>
-                    <td>{{$loan->getArrangementFee()}}</td>
+                    <td>${{$loan->getAmount()}}</td>
+                    <td>{{$loan->getMonthsDuration()}}months</td>
+                    <td>{{$loan->getRepaymentFrequencyType()}}</td>
+                    <td>{{$loan->getMonthlyInterestRate()}}%</td>
+                    <td>${{$loan->getArrangementFee()}}</td>
                     <td>{{$loan->getRemarks()}}</td>
                     <td>{{$loan->getDateContractStart()}}</td>
                     <td>{{$loan->getDateContractEnd()}}</td>
                     <td>{{$loan->getLastUpdatedTime()}}</td>
                     <td>{{$loan->getCreatedTime()}}</td>
                     <td>
-                    <a href="{{route('repayments.get', $loan->getId())}}">Get Repayment</a>
+                        <a href="{{route('repayments.get', $loan->getId())}}">Get Repayment</a>
                     </td>
                 </tr>
                 @endforeach

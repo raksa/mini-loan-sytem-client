@@ -2,7 +2,7 @@
 namespace App\Components\MiniAspire\Modules\Loan;
 
 use App\Components\MiniAspire\Modules\Repayment\Repayment;
-use App\Components\MiniAspire\Modules\User\User;
+use App\Components\MiniAspire\Modules\Repayment\RepaymentFrequency;
 use App\Helpers\Util;
 use Carbon\Carbon;
 
@@ -67,6 +67,10 @@ class Loan
     public function getRepaymentFrequencyTypeId()
     {
         return $this->{self::REPAYMENT_FREQUENCY};
+    }
+    public function getRepaymentFrequencyType()
+    {
+        return RepaymentFrequency::getRepaymentFrequencyTypeName($this->getRepaymentFrequencyTypeId());
     }
     public function getMonthlyInterestRate()
     {

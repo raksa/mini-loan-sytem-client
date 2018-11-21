@@ -16,8 +16,7 @@ user name: {{$user->getFirstName()}} {{$user->getLastName()}}
     {!! Form::open(['route' => ['loans.create', $user->getId()], 'method' => 'POST', 'class' => '']) !!}
         <div>
             <label for="amount">Amount:</label>
-            <input id="amount" name="amount" type="number" value="1000" required>
-            $
+            $<input id="amount" name="amount" type="number" value="1000" required>
         </div>
         <div>
             <label for="duration">Month Duration:</label>
@@ -37,7 +36,7 @@ user name: {{$user->getFirstName()}} {{$user->getLastName()}}
         </div>
         <div>
             <label for="arrangement_fee">Arrangement Fee:</label>
-            <input id="arrangement_fee" name="arrangement_fee" type="number" value="10" required>$
+            $<input id="arrangement_fee" name="arrangement_fee" type="number" value="10" required>
         </div>
         <div>
             <label for="remarks">Remarks:</label>
@@ -78,11 +77,11 @@ user name: {{$user->getFirstName()}} {{$user->getLastName()}}
             <tbody>
                 <tr>
                     <td>{{$loan->getId()}}</td>
-                    <td>{{$loan->getAmount()}}</td>
-                    <td>{{$loan->getMonthsDuration()}}</td>
-                    <td>{{$loan->getRepaymentFrequencyTypeId()}}</td>
-                    <td>{{$loan->getMonthlyInterestRate()}}</td>
-                    <td>{{$loan->getArrangementFee()}}</td>
+                    <td>${{$loan->getAmount()}}</td>
+                    <td>{{$loan->getMonthsDuration()}}months</td>
+                    <td>{{$loan->getRepaymentFrequencyType()}}</td>
+                    <td>{{$loan->getMonthlyInterestRate()}}%</td>
+                    <td>${{$loan->getArrangementFee()}}</td>
                     <td>{{$loan->getRemarks()}}</td>
                     <td>{{$loan->getDateContractStart()}}</td>
                     <td>{{$loan->getDateContractEnd()}}</td>
