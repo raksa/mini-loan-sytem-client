@@ -69,9 +69,8 @@
                 <div class="title m-b-md">
                     MiniAspire
                 </div>
-
                 <div class="links">
-                <a href="{{route('loans.get')}}">Get Loans</a>
+                    <a href="{{route('users.get')}}">Get Users</a>
                 </div>
             </div>
         </div>

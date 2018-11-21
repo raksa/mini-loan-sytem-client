@@ -2,7 +2,9 @@
 namespace App\Components\MiniAspire\Modules\User;
 
 use App\Components\MiniAspire\Modules\Loan\Loan;
+use App\Helpers\Util;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
 
 /*
  * Author: Raksa Eng
@@ -28,6 +30,7 @@ class User
             }
         }
         $this->{self::ID} = $data[self::ID];
+        $this->{self::USER_CODE} = $data[self::USER_CODE];
         $this->{self::FIRST_NAME} = $data[self::FIRST_NAME];
         $this->{self::LAST_NAME} = $data[self::LAST_NAME];
         $this->{self::PHONE_NUMBER} = $data[self::PHONE_NUMBER];
@@ -67,5 +70,36 @@ class User
     public function getCreatedTime()
     {
         return new Carbon($this->{self::CREATED});
+    }
+
+    public static function getById(&$bag, $id)
+    {
+        $client = new \GuzzleHttp\Client();
+        $url = config('app.api_url') . "/api/v1/users/get/" . $id;
+        try {
+            $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
+                'json' => [],
+            ], 'json'));
+            $status = $res->getStatusCode();
+            if ($status == 200) {
+                $body = $res->getBody();
+                $jsonResponse = \json_decode($body->getContents(), true);
+                $data = $jsonResponse['data'];
+                return new self($data);
+            }
+            $message = 'Error with status: ' . $status;
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            if ($e->hasResponse()) {
+                $res = $e->getResponse();
+                $body = $res->getBody();
+                $jsonResponse = \json_decode($body->getContents());
+                $message = $jsonResponse['message'];
+            }
+        } catch (\Exception $e) {
+            \Log::error($e);
+            $message = $e->getMessage();
+        }
+        $bag = ['message' => $message];
+        return null;
     }
 }

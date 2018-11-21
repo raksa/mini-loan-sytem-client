@@ -28,7 +28,7 @@ class UserController extends Controller
         try {
             $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => [
-                    'perPage' => 20,
+                    'perPage' => 5,
                     'page' => $request->input('page'),
                 ],
             ], 'json'));
@@ -42,9 +42,9 @@ class UserController extends Controller
                     $usersArray[] = new User($userData);
                 }
                 $collection = new Collection($usersArray);
-                $meta = (array) $jsonResponse->meta;
+                $meta = (array) $jsonResponse['meta'];
                 $users = new LengthAwarePaginator($collection, $meta['total'], $meta['per_page'],
-                    $meta['current_page'], ['path' => route('player.transaction.trans.history')]);
+                    $meta['current_page'], ['path' => route('users.get')]);
             }
             $message = 'Error with status: ' . $status;
         } catch (\GuzzleHttp\Exception\ClientException $e) {
@@ -89,8 +89,8 @@ class UserController extends Controller
             if ($status == 200) {
                 $body = $res->getBody();
                 $jsonResponse = \json_decode($body->getContents(), true);
-                return back()->with('success', 'Create success', [
-                    'users' => $jsonResponse['user'],
+                return View::make($this->toViewFullPath('create-user'), [
+                    'user' => new User($jsonResponse['user']),
                 ]);
             }
         } catch (\GuzzleHttp\Exception\ClientException $e) {
@@ -103,8 +103,6 @@ class UserController extends Controller
                 }
             }
         } catch (\Exception $e) {
-            \Log::error('Creating player');
-            \Log::info($url);
             \Log::error($e);
         }
         return back()->with('error', 'Create fail', [])->withInput();

@@ -1,24 +1,20 @@
 <div>
     @if(session()->has('success'))
-    <div>
-        {{ session('success') }}</div>
+    <div style="color: green">{{ session('success') }}</div>
     @endif
     @if(session()->has('info'))
-    <div>
-        {{ session('info') }}</div>
+    <div style="color: blue">{{ session('info') }}</div>
     @endif
     @if(session()->has('warning'))
-    <div>
-        {{ session('warning') }}</div>
+    <div style="color: yellow">{{ session('warning') }}</div>
     @endif
     @if(session()->has('error'))
-    <div>
-        {{ session('error') }}</div>
+    <div style="color: red">{{ session('error') }}</div>
     @endif
     {{-- Validator error --}}
     @if (isset($errors) && $errors->any())
     @foreach ($errors->all() as $error)
-        <div>
+        <div style="color: red">
             {{ $error }}
         </div>
     @endforeach

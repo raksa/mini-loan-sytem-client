@@ -3,6 +3,7 @@ namespace App\Components\MiniAspire\Modules\Loan;
 
 use App\Components\MiniAspire\Modules\Repayment\Repayment;
 use App\Components\MiniAspire\Modules\User\User;
+use App\Helpers\Util;
 use Carbon\Carbon;
 
 /*
@@ -95,5 +96,35 @@ class Loan
     public function getCreatedTime()
     {
         return new Carbon($this->{self::CREATED});
+    }
+
+    public static function getFreqType(&$bag)
+    {
+        $client = new \GuzzleHttp\Client();
+        $url = config('app.api_url') . "/api/v1/loans/get_freq_type";
+        try {
+            $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
+                'json' => [],
+            ], 'json'));
+            $status = $res->getStatusCode();
+            if ($status == 200) {
+                $body = $res->getBody();
+                $jsonResponse = \json_decode($body->getContents(), true);
+                return $jsonResponse['types'];
+            }
+            $message = 'Error with status: ' . $status;
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            if ($e->hasResponse()) {
+                $res = $e->getResponse();
+                $body = $res->getBody();
+                $jsonResponse = \json_decode($body->getContents());
+                $message = $jsonResponse['message'];
+            }
+        } catch (\Exception $e) {
+            \Log::error($e);
+            $message = $e->getMessage();
+        }
+        $bag = ['message' => $message];
+        return [];
     }
 }
