@@ -48,7 +48,7 @@ class RepaymentController extends Controller
         $url = config('app.api_url') . "/api/v1/repayments/pay/" . $id;
         try {
             $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
-                'json' => [],
+                'json' => $request->all(),
             ], 'json'));
             $status = $res->getStatusCode();
             if ($status == 200) {

@@ -2,7 +2,6 @@
 namespace App\Components\MiniAspire\Modules\Repayment;
 
 use App\Components\MiniAspire\Modules\Loan\Loan;
-use App\Components\MiniAspire\Modules\User\User;
 use Carbon\Carbon;
 
 /*
@@ -63,11 +62,11 @@ class Repayment
     }
     public function getDueDate()
     {
-        return new Carbon($this->{self::DUE_DATE});
+        return $this->{self::DUE_DATE} ? new Carbon($this->{self::DUE_DATE}) : null;
     }
     public function getDateOfPayment()
     {
-        return new Carbon($this->{self::DATE_OF_PAYMENT});
+        return $this->{self::DATE_OF_PAYMENT} ? new Carbon($this->{self::DATE_OF_PAYMENT}) : null;
     }
     public function getRemarks()
     {

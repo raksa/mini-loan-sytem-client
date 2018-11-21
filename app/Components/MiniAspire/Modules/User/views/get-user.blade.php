@@ -24,6 +24,7 @@
                     <th>address</th>
                     <th>last updated</th>
                     <th>created</th>
+                    <th>loan count</th>
                     <th>actions</th>
 
                 </tr>
@@ -39,6 +40,7 @@
                     <td>{{$user->getAddress()}}</td>
                     <td>{{$user->getLastUpdatedTime()}}</td>
                     <td>{{$user->getCreatedTime()}}</td>
+                    <td>{{\count($user->loans)}}</td>
                     <td>
                         <a href="{{route('loans.get', $user->getId())}}">Go Get Loans</a>
                         <br>

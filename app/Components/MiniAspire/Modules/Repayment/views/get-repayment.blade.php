@@ -84,6 +84,7 @@
                         <td>
                             {!! Form::open(['route' => ['repayments.pay', $repayment->getId()], 'method' => 'POST', 'class' => '']) !!}
                                 {!! Form::submit('Pay', ['class' => '']) !!}
+                                <input type="text" name="remarks" placeholder="remarks">
                             {!! Form::close() !!}
                         </td>
                     </tr>

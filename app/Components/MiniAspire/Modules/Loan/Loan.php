@@ -86,11 +86,11 @@ class Loan
     }
     public function getDateContractStart()
     {
-        return new Carbon($this->{self::DATE_CONTRACT_START});
+        return $this->{self::DATE_CONTRACT_START} ? new Carbon($this->{self::DATE_CONTRACT_START}) : null;
     }
     public function getDateContractEnd()
     {
-        return new Carbon($this->{self::DATE_CONTRACT_END});
+        return $this->{self::DATE_CONTRACT_END} ? new Carbon($this->{self::DATE_CONTRACT_END}) : null;
     }
 
     public function getLastUpdatedTime()
