@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Components\MiniAspire\Modules\Loan;
+namespace App\Components\MiniAspire\Modules\User;
 
 use App\Helpers\Util;
 use App\Http\Controllers\Controller;
@@ -13,18 +13,18 @@ use Illuminate\Support\Facades\View;
 /*
  * Author: Raksa Eng
  */
-class LoanController extends Controller
+class UserController extends Controller
 {
     /**
-     * Create loan
+     * Create user
      *
      * @param \Illuminate\Http\Request $request
      */
-    public function getLoan(Request $request)
+    public function getUser(Request $request)
     {
-        $loans = new LengthAwarePaginator(new Collection(), 0, 1, null);
+        $users = new LengthAwarePaginator(new Collection(), 0, 1, null);
         $client = new \GuzzleHttp\Client();
-        $url = config('app.api_url') . "/api/v1/loans/get";
+        $url = config('app.api_url') . "/api/v1/users/get";
         try {
             $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => [
@@ -37,13 +37,13 @@ class LoanController extends Controller
                 $body = $res->getBody();
                 $jsonResponse = \json_decode($body->getContents(), true);
                 $data = $jsonResponse['data'];
-                $loansArray = [];
-                foreach ($data as $loanData) {
-                    $loansArray[] = new Loan($loanData);
+                $usersArray = [];
+                foreach ($data as $userData) {
+                    $usersArray[] = new User($userData);
                 }
-                $collection = new Collection($loansArray);
+                $collection = new Collection($usersArray);
                 $meta = (array) $jsonResponse->meta;
-                $loans = new LengthAwarePaginator($collection, $meta['total'], $meta['per_page'],
+                $users = new LengthAwarePaginator($collection, $meta['total'], $meta['per_page'],
                     $meta['current_page'], ['path' => route('player.transaction.trans.history')]);
             }
             $message = 'Error with status: ' . $status;
@@ -58,29 +58,29 @@ class LoanController extends Controller
             \Log::error($e);
             $message = $e->getMessage();
         }
-        return View::make($this->toViewFullPath('get-loan'), [
-            'loans' => $loans,
+        return View::make($this->toViewFullPath('get-user'), [
+            'users' => $users,
         ])->with('error', $message);
     }
 
     /**
-     * Get create loan view
+     * Get create user view
      *
      * @param \Illuminate\Http\Request $request
      */
-    public function createLoan(Request $request)
+    public function createUser(Request $request)
     {
-        return View::make($this->toViewFullPath('create-loan'), []);
+        return View::make($this->toViewFullPath('create-user'), []);
     }
     /**
-     * Do creating loans
+     * Do creating users
      *
      * @param \Illuminate\Http\Request $request
      */
-    public function doCreateLoan(Request $request)
+    public function doCreateUser(Request $request)
     {
         $client = new Client();
-        $url = config('app.api_url') . "/api/v1/loans/create";
+        $url = config('app.api_url') . "/api/v1/users/create";
         try {
             $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => $request->all(),
@@ -90,7 +90,7 @@ class LoanController extends Controller
                 $body = $res->getBody();
                 $jsonResponse = \json_decode($body->getContents(), true);
                 return back()->with('success', 'Create success', [
-                    'loans' => $jsonResponse['loan'],
+                    'users' => $jsonResponse['user'],
                 ]);
             }
         } catch (\GuzzleHttp\Exception\ClientException $e) {

@@ -4,7 +4,6 @@ namespace App\Components\MiniAspire\Modules\Loan;
 use App\Components\MiniAspire\Modules\Repayment\Repayment;
 use App\Components\MiniAspire\Modules\User\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /*
  * Author: Raksa Eng
@@ -29,11 +28,13 @@ class Loan
 
     public function __constructor($data)
     {
-        if(isset($data['user'])){
+        if (isset($data['user'])) {
             $this->user = new User($data['user']);
         }
-        foreach($data['repayments'] as $repaymentData) {
-            $this->repayments[] = new Repayment($repaymentData);
+        if (isset($data['repayments'])) {
+            foreach ($data['repayments'] as $repaymentData) {
+                $this->repayments[] = new Repayment($repaymentData);
+            }
         }
         $this->{self::ID} = $data[self::ID];
         $this->{self::USER_ID} = $data[self::USER_ID];
@@ -46,6 +47,8 @@ class Loan
         $this->{self::DATE_CONTRACT_START} = $data[self::DATE_CONTRACT_START];
         $endDate = $this->getDateContractStart()->copy()->addMonth($this->getMonthsDuration());
         $this->{self::DATE_CONTRACT_END} = $endDate;
+        $this->{self::LAST_UPDATED} = $data[self::LAST_UPDATED];
+        $this->{self::CREATED} = $data[self::CREATED];
     }
 
     public function getId()

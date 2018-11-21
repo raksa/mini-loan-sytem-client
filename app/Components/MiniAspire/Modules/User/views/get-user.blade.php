@@ -5,7 +5,7 @@
 
 @include('resources.views.inc.flash')
 
-<a href="{{route('loans.create')}}">Go Create Loan</a>
+<a href="{{route('users.create')}}">Go Create User</a>
 &nbsp;&nbsp;<a href="/">Home</a>
 
 <div>
@@ -18,14 +18,14 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($loans as $loan)
+                @foreach ($users as $user)
                 <tr>
-                    <td>{{$loan->getAmount()}}</td>
+                    <td>{{$user->getAmount()}}</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
-        {{$loans->links()}}
+        {{$users->links()}}
     </div>
 </div>
 @stop

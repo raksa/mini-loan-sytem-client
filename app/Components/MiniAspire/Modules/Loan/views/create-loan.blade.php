@@ -3,6 +3,8 @@
 @stop
 @section('content')
 
+@include('resources.views.inc.flash')
+
 <h1>Create Loan</h1>
 <div>
     {!! Form::open(['route' => 'loans.create', 'method' => 'POST', 'class' => '']) !!}

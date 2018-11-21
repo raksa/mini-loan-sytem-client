@@ -1,6 +1,8 @@
 <?php
 namespace App\Components\MiniAspire\Modules\Repayment;
 
+use App\Components\MiniAspire\Modules\Loan\Loan;
+use App\Components\MiniAspire\Modules\User\User;
 use Carbon\Carbon;
 
 /*
@@ -21,8 +23,17 @@ class Repayment
     const LAST_UPDATED = 'last_updated';
     const CREATED = 'created';
 
+    public $loan = null;
+    public $user = null;
+
     public function __construct($data)
     {
+        if (isset($data['user'])) {
+            $this->user = new User($data['user']);
+        }
+        if (isset($data['loan'])) {
+            $this->loan = new Loan($data['loan']);
+        }
         $this->{self::ID} = $data[self::ID];
         $this->{self::LOAN_ID} = $data[self::LOAN_ID];
         $this->{self::AMOUNT} = $data[self::AMOUNT];
@@ -30,6 +41,8 @@ class Repayment
         $this->{self::DUE_DATE} = $data[self::DUE_DATE];
         $this->{self::DATE_OF_PAYMENT} = $data[self::DATE_OF_PAYMENT];
         $this->{self::REMARKS} = $data[self::REMARKS];
+        $this->{self::LAST_UPDATED} = $data[self::LAST_UPDATED];
+        $this->{self::CREATED} = $data[self::CREATED];
     }
 
     public function getId()
