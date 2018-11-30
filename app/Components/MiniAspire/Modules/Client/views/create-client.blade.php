@@ -5,9 +5,9 @@
 
 @include('resources.views.inc.flash')
 
-<h1>Create User</h1>
+<h1>Create Client</h1>
 <div>
-    {!! Form::open(['route' => 'users.create', 'method' => 'POST', 'class' => '']) !!}
+    {!! Form::open(['route' => 'clients.create', 'method' => 'POST', 'class' => '']) !!}
         <div>
             <label for="first_name">First Name:</label>
             <input id="first_name" name="first_name" type="text" value="fname" required>
@@ -29,38 +29,32 @@
         </div>
     {!! Form::close() !!}
 </div>
-<hr>
+
 <div>
-    @if (isset($user))
+    @if (isset($client))
         <table border="1">
             <thead>
                 <tr>
                     <th>id</th>
-                    <th>user code</th>
+                    <th>client code</th>
                     <th>first name</th>
                     <th>last name</th>
                     <th>phone number</th>
                     <th>address</th>
                     <th>last updated</th>
                     <th>created</th>
-                    <th>action</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>{{$user->getId()}}</td>
-                    <td>{{$user->getUserCode()}}</td>
-                    <td>{{$user->getFirstName()}}</td>
-                    <td>{{$user->getLastName()}}</td>
-                    <td>{{$user->getPhoneNumber()}}</td>
-                    <td>{{$user->getAddress()}}</td>
-                    <td>{{$user->getLastUpdatedTime()}}</td>
-                    <td>{{$user->getCreatedTime()}}</td>
-                    <td>
-                        <a href="{{route('loans.get', $user->getId())}}">Go Get Loans</a>
-                        <br>
-                        <a href="{{route('loans.create', $user->getId())}}">Go Create Loan</a>
-                    </td>
+                    <td>{{$client->getId()}}</td>
+                    <td>{{$client->getClientCode()}}</td>
+                    <td>{{$client->getFirstName()}}</td>
+                    <td>{{$client->getLastName()}}</td>
+                    <td>{{$client->getPhoneNumber()}}</td>
+                    <td>{{$client->getAddress()}}</td>
+                    <td>{{$client->getLastUpdatedTime()}}</td>
+                    <td>{{$client->getCreatedTime()}}</td>
                 </tr>
             </tbody>
         </table>
@@ -69,5 +63,5 @@
 
 <hr>
 <a href="/">Home</a>
-&nbsp;&nbsp;<a href="{{route('users.get')}}">Get Users</a>
+&nbsp;&nbsp;<a href="{{route('clients.get')}}">Get Clients</a>
 @stop

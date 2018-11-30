@@ -70,7 +70,7 @@
                     MiniAspire
                 </div>
                 <div class="links">
-                    <a href="{{route('users.get')}}">Get Users</a>
+                    <a href="{{route('clients.get')}}">Get Clients</a>
                 </div>
             </div>
         </div>

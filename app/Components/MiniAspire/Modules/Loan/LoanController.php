@@ -2,10 +2,9 @@
 
 namespace App\Components\MiniAspire\Modules\Loan;
 
-use App\Components\MiniAspire\Modules\User\User;
+use App\Components\MiniAspire\Modules\Client\Client;
 use App\Helpers\Util;
 use App\Http\Controllers\Controller;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -20,15 +19,15 @@ class LoanController extends Controller
      * Create loan
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Components\MiniAspire\Modules\User\User::ID $id
+     * @param \App\Components\MiniAspire\Modules\Client\Client::ID $id
      */
     public function getLoan(Request $request, $id)
     {
-        $user = User::getById($bag, $id);
-        if (!$user) {
+        $client = Client::getById($bag, $id);
+        if (!$client) {
             $request->session()->flash('error', $bag['message']);
             return View::make($this->toViewFullPath('get-loan'), [
-                'user' => null,
+                'client' => null,
             ]);
         }
         $loans = new LengthAwarePaginator(new Collection(), 0, 1, null);
@@ -68,7 +67,7 @@ class LoanController extends Controller
             $message = $e->getMessage();
         }
         return View::make($this->toViewFullPath('get-loan'), [
-            'user' => $user,
+            'client' => $client,
             'loans' => $loans,
         ])->with('error', $message);
     }
@@ -77,20 +76,20 @@ class LoanController extends Controller
      * Get create loan view
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Components\MiniAspire\Modules\User\User::ID $id
+     * @param \App\Components\MiniAspire\Modules\Client\Client::ID $id
      */
     public function createLoan(Request $request, $id)
     {
-        $user = User::getById($bag, $id);
-        if (!$user) {
+        $client = Client::getById($bag, $id);
+        if (!$client) {
             $request->session()->flash('error', $bag['message']);
             return View::make($this->toViewFullPath('create-loan'), [
-                'user' => null,
+                'client' => null,
             ]);
         }
         $loan = $request->has('loanId') ? Loan::getById($bag, $request->get('loanId')) : null;
         return View::make($this->toViewFullPath('create-loan'), [
-            'user' => $user,
+            'client' => $client,
             'loan' => $loan,
             'freqTypes' => Loan::getFreqType($bag),
         ]);
@@ -99,11 +98,11 @@ class LoanController extends Controller
      * Do creating loans
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Components\MiniAspire\Modules\User\User::ID $id
+     * @param \App\Components\MiniAspire\Modules\Client\Client::ID $id
      */
     public function doCreateLoan(Request $request, $id)
     {
-        $client = new Client();
+        $client = new \GuzzleHttp\Client();
         $url = config('app.api_url') . "/api/v1/loans/create/" . $id;
         try {
             $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([

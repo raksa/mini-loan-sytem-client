@@ -1,18 +1,17 @@
 <?php
-namespace App\Components\MiniAspire\Modules\User;
+namespace App\Components\MiniAspire\Modules\Client;
 
 use App\Components\MiniAspire\Modules\Loan\Loan;
 use App\Helpers\Util;
 use Carbon\Carbon;
-use GuzzleHttp\Client;
 
 /*
  * Author: Raksa Eng
  */
-class User
+class Client
 {
     const ID = 'id';
-    const USER_CODE = 'user_code'; //special string to make unique identify user
+    const CLIENT_CODE = 'client_code'; //special string to make unique identify client
     const FIRST_NAME = 'first_name';
     const LAST_NAME = 'last_name';
     const PHONE_NUMBER = 'phone_number';
@@ -30,7 +29,7 @@ class User
             }
         }
         $this->{self::ID} = $data[self::ID];
-        $this->{self::USER_CODE} = $data[self::USER_CODE];
+        $this->{self::CLIENT_CODE} = $data[self::CLIENT_CODE];
         $this->{self::FIRST_NAME} = $data[self::FIRST_NAME];
         $this->{self::LAST_NAME} = $data[self::LAST_NAME];
         $this->{self::PHONE_NUMBER} = $data[self::PHONE_NUMBER];
@@ -43,9 +42,9 @@ class User
     {
         return $this->{self::ID};
     }
-    public function getUserCode()
+    public function getClientCode()
     {
-        return $this->{self::USER_CODE};
+        return $this->{self::CLIENT_CODE};
     }
     public function getFirstName()
     {
@@ -75,7 +74,7 @@ class User
     public static function getById(&$bag, $id)
     {
         $client = new \GuzzleHttp\Client();
-        $url = config('app.api_url') . "/api/v1/users/get/" . $id;
+        $url = config('app.api_url') . "/api/v1/clients/get/" . $id;
         try {
             $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => [],

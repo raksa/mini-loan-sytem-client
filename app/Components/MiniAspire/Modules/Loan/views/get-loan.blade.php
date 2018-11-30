@@ -7,15 +7,15 @@
 
 <h1>Get Loans</h1>
 
-<a href="{{route('users.create')}}">Go Create User</a>
-&nbsp;&nbsp;<a href="{{route('users.get')}}">Get Users</a>
+<a href="{{route('clients.create')}}">Go Create Client</a>
+&nbsp;&nbsp;<a href="{{route('clients.get')}}">Get Clients</a>
 &nbsp;&nbsp;<a href="/">Home</a>
-@if (isset($user))
-    &nbsp;&nbsp;<a href="{{route('loans.create', $user->getId())}}">Go Create Loan</a>
+@if (isset($client))
+    &nbsp;&nbsp;<a href="{{route('loans.create', $client->getId())}}">Go Create Loan</a>
     <hr>
-    user code: {{$user->getUserCode()}}
+    client code: {{$client->getClientCode()}}
     <br>
-    user name: {{$user->getFirstName()}} {{$user->getLastName()}}
+    client name: {{$client->getFirstName()}} {{$client->getLastName()}}
     <hr>
 @endif
 <div>

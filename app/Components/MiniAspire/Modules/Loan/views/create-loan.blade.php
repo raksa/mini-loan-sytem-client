@@ -6,14 +6,14 @@
 @include('resources.views.inc.flash')
 
 <h1>Create Loan</h1>
-@if (isset($user))
+@if (isset($client))
 <hr>
-user code: {{$user->getUserCode()}}
+client code: {{$client->getClientCode()}}
 <br>
-user name: {{$user->getFirstName()}} {{$user->getLastName()}}
+client name: {{$client->getFirstName()}} {{$client->getLastName()}}
 <hr>
 <div>
-    {!! Form::open(['route' => ['loans.create', $user->getId()], 'method' => 'POST', 'class' => '']) !!}
+    {!! Form::open(['route' => ['loans.create', $client->getId()], 'method' => 'POST', 'class' => '']) !!}
         <div>
             <label for="amount">Amount:</label>
             $<input id="amount" name="amount" type="number" value="1000" required>
@@ -128,8 +128,8 @@ user name: {{$user->getFirstName()}} {{$user->getLastName()}}
 
 <hr>
 <a href="/">Home</a>
-&nbsp;&nbsp;<a href="{{route('users.get')}}">Get Users</a>
-@if (isset($user))
-    &nbsp;&nbsp;<a href="{{route('loans.get', $user->getId())}}">Get Loans</a>
+&nbsp;&nbsp;<a href="{{route('clients.get')}}">Get Clients</a>
+@if (isset($client))
+    &nbsp;&nbsp;<a href="{{route('loans.get', $client->getId())}}">Get Loans</a>
 @endif
 @stop

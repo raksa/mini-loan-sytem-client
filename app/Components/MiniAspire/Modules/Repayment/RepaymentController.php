@@ -2,11 +2,10 @@
 
 namespace App\Components\MiniAspire\Modules\Repayment;
 
+use App\Components\MiniAspire\Modules\Client\Client;
 use App\Components\MiniAspire\Modules\Loan\Loan;
-use App\Components\MiniAspire\Modules\User\User;
 use App\Helpers\Util;
 use App\Http\Controllers\Controller;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
@@ -25,9 +24,9 @@ class RepaymentController extends Controller
     {
         $loan = Loan::getById($bag, $id);
         if ($loan) {
-            $user = User::getById($bag, $loan->getUserId());
+            $client = Client::getById($bag, $loan->getClientId());
             return View::make($this->toViewFullPath('get-repayment'), [
-                'user' => $user,
+                'client' => $client,
                 'loan' => $loan,
             ]);
         }
@@ -44,7 +43,7 @@ class RepaymentController extends Controller
      */
     public function doPayRepayment(Request $request, $id)
     {
-        $client = new Client();
+        $client = new \GuzzleHttp\Client();
         $url = config('app.api_url') . "/api/v1/repayments/pay/" . $id;
         try {
             $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([

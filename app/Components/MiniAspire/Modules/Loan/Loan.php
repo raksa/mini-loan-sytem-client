@@ -12,7 +12,7 @@ use Carbon\Carbon;
 class Loan
 {
     const ID = 'id';
-    const USER_ID = 'user_id';
+    const CLIENT_ID = 'client_id';
     const AMOUNT = 'amount';
     const DURATION = 'duration';
     const REPAYMENT_FREQUENCY = 'repayment_frequency';
@@ -34,7 +34,7 @@ class Loan
             }
         }
         $this->{self::ID} = $data[self::ID];
-        $this->{self::USER_ID} = $data[self::USER_ID];
+        $this->{self::CLIENT_ID} = $data[self::CLIENT_ID];
         $this->{self::AMOUNT} = $data[self::AMOUNT];
         $this->{self::DURATION} = $data[self::DURATION];
         $this->{self::REPAYMENT_FREQUENCY} = $data[self::REPAYMENT_FREQUENCY];
@@ -52,9 +52,9 @@ class Loan
     {
         return $this->{self::ID};
     }
-    public function getUserId()
+    public function getClientId()
     {
-        return $this->{self::USER_ID};
+        return $this->{self::CLIENT_ID};
     }
     public function getAmount()
     {

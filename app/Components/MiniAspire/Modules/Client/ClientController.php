@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Components\MiniAspire\Modules\User;
+namespace App\Components\MiniAspire\Modules\Client;
 
 use App\Helpers\Util;
 use App\Http\Controllers\Controller;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -13,18 +12,18 @@ use Illuminate\Support\Facades\View;
 /*
  * Author: Raksa Eng
  */
-class UserController extends Controller
+class ClientController extends Controller
 {
     /**
-     * Create user
+     * Create client
      *
      * @param \Illuminate\Http\Request $request
      */
-    public function getUser(Request $request)
+    public function getClient(Request $request)
     {
-        $users = new LengthAwarePaginator(new Collection(), 0, 1, null);
+        $clients = new LengthAwarePaginator(new Collection(), 0, 1, null);
         $client = new \GuzzleHttp\Client();
-        $url = config('app.api_url') . "/api/v1/users/get";
+        $url = config('app.api_url') . "/api/v1/clients/get";
         try {
             $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => [
@@ -37,14 +36,14 @@ class UserController extends Controller
                 $body = $res->getBody();
                 $jsonResponse = \json_decode($body->getContents(), true);
                 $data = $jsonResponse['data'];
-                $usersArray = [];
-                foreach ($data as $userData) {
-                    $usersArray[] = new User($userData);
+                $clientsArray = [];
+                foreach ($data as $clientData) {
+                    $clientsArray[] = new Client($clientData);
                 }
-                $collection = new Collection($usersArray);
+                $collection = new Collection($clientsArray);
                 $meta = (array) $jsonResponse['meta'];
-                $users = new LengthAwarePaginator($collection, $meta['total'], $meta['per_page'],
-                    $meta['current_page'], ['path' => route('users.get')]);
+                $clients = new LengthAwarePaginator($collection, $meta['total'], $meta['per_page'],
+                    $meta['current_page'], ['path' => route('clients.get')]);
             }
             $message = 'Error with status: ' . $status;
         } catch (\GuzzleHttp\Exception\ClientException $e) {
@@ -58,29 +57,29 @@ class UserController extends Controller
             \Log::error($e);
             $message = $e->getMessage();
         }
-        return View::make($this->toViewFullPath('get-user'), [
-            'users' => $users,
+        return View::make($this->toViewFullPath('get-client'), [
+            'clients' => $clients,
         ])->with('error', $message);
     }
 
     /**
-     * Get create user view
+     * Get create client view
      *
      * @param \Illuminate\Http\Request $request
      */
-    public function createUser(Request $request)
+    public function createClient(Request $request)
     {
-        return View::make($this->toViewFullPath('create-user'), []);
+        return View::make($this->toViewFullPath('create-client'), []);
     }
     /**
-     * Do creating users
+     * Do creating clients
      *
      * @param \Illuminate\Http\Request $request
      */
-    public function doCreateUser(Request $request)
+    public function doCreateClient(Request $request)
     {
-        $client = new Client();
-        $url = config('app.api_url') . "/api/v1/users/create";
+        $client = new \GuzzleHttp\Client();
+        $url = config('app.api_url') . "/api/v1/clients/create";
         try {
             $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => $request->all(),
@@ -89,8 +88,8 @@ class UserController extends Controller
             if ($status == 200) {
                 $body = $res->getBody();
                 $jsonResponse = \json_decode($body->getContents(), true);
-                return View::make($this->toViewFullPath('create-user'), [
-                    'user' => new User($jsonResponse['user']),
+                return View::make($this->toViewFullPath('create-client'), [
+                    'client' => new Client($jsonResponse['client']),
                 ]);
             }
         } catch (\GuzzleHttp\Exception\ClientException $e) {
