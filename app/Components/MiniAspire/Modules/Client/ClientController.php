@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\MessageBag;
 
 /*
  * Author: Raksa Eng
@@ -98,7 +99,17 @@ class ClientController extends Controller
                 if ($res->getStatusCode() == 400) {
                     $body = $res->getBody();
                     $jsonResponse = \json_decode($body->getContents(), true);
-                    return back()->with('error', $jsonResponse['message'], [])->withInput();
+                    $response = back()->with('error', $jsonResponse['message'], []);
+                    if (isset($jsonResponse['errors'])) {
+                        $errors = new MessageBag();
+                        foreach ($jsonResponse['errors'] as $field => $messages) {
+                            foreach ($messages as $message) {
+                                $errors->add($field, $message);
+                            }
+                        }
+                        $response->withErrors($errors);
+                    }
+                    return $response->withInput();
                 }
             }
         } catch (\Exception $e) {
