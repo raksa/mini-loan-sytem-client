@@ -1,5 +1,7 @@
 ## Loan Client Test
 
+Client interface implement to work with mini-loan-system api https://github.com/raksa/mini-loan-sytem
+
 ## Contributors
 
 * raksa <eng.raksa@gmail.com>
