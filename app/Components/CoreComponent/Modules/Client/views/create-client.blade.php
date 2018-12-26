@@ -20,6 +20,7 @@
                     <th>address</th>
                     <th>last updated</th>
                     <th>created</th>
+                    <th>actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,6 +33,9 @@
                     <td>{{$client->getAddress()}}</td>
                     <td>{{$client->getLastUpdatedTime()}}</td>
                     <td>{{$client->getCreatedTime()}}</td>
+                    <td>
+                        <a href="{{route('loans.create', $client->getId())}}">Go Create Loan</a>
+                    </td>
                 </tr>
             </tbody>
         </table>
