@@ -50,9 +50,9 @@ class RepaymentController extends Controller
                 'json' => $request->all(),
             ], 'json'));
             $status = $res->getStatusCode();
-            if ($status == 200) {
-                $body = $res->getBody();
-                $jsonResponse = \json_decode($body->getContents(), true);
+            $body = $res->getBody();
+            $jsonResponse = \json_decode($body->getContents(), true);
+            if ($jsonResponse && $jsonResponse["status"] == "success") {
                 $repayment = new Repayment($jsonResponse['repayment']);
                 return back()->with('success', 'Success for repayment id:' . $repayment->getId());
             }

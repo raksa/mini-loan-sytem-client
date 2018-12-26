@@ -86,9 +86,9 @@ class ClientController extends Controller
                 'json' => $request->all(),
             ], 'json'));
             $status = $res->getStatusCode();
-            if ($status == 200) {
-                $body = $res->getBody();
-                $jsonResponse = \json_decode($body->getContents(), true);
+            $body = $res->getBody();
+            $jsonResponse = \json_decode($body->getContents(), true);
+            if ($jsonResponse && $jsonResponse["status"] == "success") {
                 return View::make($this->toViewFullPath('create-client'), [
                     'client' => new Client($jsonResponse['client']),
                 ]);

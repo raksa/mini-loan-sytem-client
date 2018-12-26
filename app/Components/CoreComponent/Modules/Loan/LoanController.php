@@ -41,9 +41,9 @@ class LoanController extends Controller
                 ],
             ], 'json'));
             $status = $res->getStatusCode();
-            if ($status == 200) {
-                $body = $res->getBody();
-                $jsonResponse = \json_decode($body->getContents(), true);
+            $body = $res->getBody();
+            $jsonResponse = \json_decode($body->getContents(), true);
+            if ($jsonResponse && $jsonResponse["status"] == "success") {
                 $data = $jsonResponse['data'];
                 $loansArray = [];
                 foreach ($data as $loanData) {
