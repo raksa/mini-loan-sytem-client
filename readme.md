@@ -23,3 +23,7 @@ this can be run every updating code time
 ## Configuration
 
 All required environment variables can be found in .env.example
+
+## License
+
+MIT
