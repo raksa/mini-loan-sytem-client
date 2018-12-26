@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Components\MiniAspire\Modules\Repayment;
+namespace App\Components\CoreComponent\Modules\Repayment;
 
-use App\Components\MiniAspire\Modules\Client\Client;
-use App\Components\MiniAspire\Modules\Loan\Loan;
+use App\Components\CoreComponent\Modules\Client\Client;
+use App\Components\CoreComponent\Modules\Loan\Loan;
 use App\Helpers\Util;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -18,7 +18,7 @@ class RepaymentController extends Controller
      * Create loan
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Components\MiniAspire\Modules\Loan\Loan::ID $id
+     * @param \App\Components\CoreComponent\Modules\Loan\Loan::ID $id
      */
     public function getRepayment(Request $request, $id)
     {

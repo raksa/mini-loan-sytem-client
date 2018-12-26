@@ -1,8 +1,8 @@
 <?php
-namespace App\Components\MiniAspire\Modules\Loan;
+namespace App\Components\CoreComponent\Modules\Loan;
 
-use App\Components\MiniAspire\Modules\Repayment\Repayment;
-use App\Components\MiniAspire\Modules\Repayment\RepaymentFrequency;
+use App\Components\CoreComponent\Modules\Repayment\Repayment;
+use App\Components\CoreComponent\Modules\Repayment\RepaymentFrequency;
 use App\Helpers\Util;
 use Carbon\Carbon;
 

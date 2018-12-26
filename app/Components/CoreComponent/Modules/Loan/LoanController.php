@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Components\MiniAspire\Modules\Loan;
+namespace App\Components\CoreComponent\Modules\Loan;
 
-use App\Components\MiniAspire\Modules\Client\Client;
+use App\Components\CoreComponent\Modules\Client\Client;
 use App\Helpers\Util;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -19,7 +19,7 @@ class LoanController extends Controller
      * Create loan
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Components\MiniAspire\Modules\Client\Client::ID $id
+     * @param \App\Components\CoreComponent\Modules\Client\Client::ID $id
      */
     public function getLoan(Request $request, $id)
     {
@@ -76,7 +76,7 @@ class LoanController extends Controller
      * Get create loan view
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Components\MiniAspire\Modules\Client\Client::ID $id
+     * @param \App\Components\CoreComponent\Modules\Client\Client::ID $id
      */
     public function createLoan(Request $request, $id)
     {
@@ -98,7 +98,7 @@ class LoanController extends Controller
      * Do creating loans
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Components\MiniAspire\Modules\Client\Client::ID $id
+     * @param \App\Components\CoreComponent\Modules\Client\Client::ID $id
      */
     public function doCreateLoan(Request $request, $id)
     {
