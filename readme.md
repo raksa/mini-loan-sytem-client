@@ -1,5 +1,7 @@
 ## Loan Client Test
 
+Client interface implement to work with mini-loan-system api https://github.com/raksa/mini-loan-sytem
+
 ## Contributors
 
 * raksa <eng.raksa@gmail.com>
@@ -21,3 +23,7 @@ this can be run every updating code time
 ## Configuration
 
 All required environment variables can be found in .env.example
+
+## License
+
+MIT
