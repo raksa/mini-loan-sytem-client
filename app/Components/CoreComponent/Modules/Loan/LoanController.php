@@ -23,6 +23,7 @@ class LoanController extends Controller
      */
     public function getLoan(Request $request, $id)
     {
+        $request->session()->forget('error');
         $client = Client::getById($bag, $id);
         if (!$client) {
             $request->session()->flash('error', $bag['message']);
@@ -33,6 +34,7 @@ class LoanController extends Controller
         $loans = new LengthAwarePaginator(new Collection(), 0, 1, null);
         $client = new \GuzzleHttp\Client();
         $url = config('app.api_url') . "/api/v1/loans/get/" . $id;
+        $message = null;
         try {
             $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => [
@@ -43,7 +45,7 @@ class LoanController extends Controller
             $status = $res->getStatusCode();
             $body = $res->getBody();
             $jsonResponse = \json_decode($body->getContents(), true);
-            if ($jsonResponse && $jsonResponse["status"] == "success") {
+            if ($jsonResponse) {
                 $data = $jsonResponse['data'];
                 $loansArray = [];
                 foreach ($data as $loanData) {
@@ -53,8 +55,9 @@ class LoanController extends Controller
                 $meta = (array) $jsonResponse['meta'];
                 $loans = new LengthAwarePaginator($collection, $meta['total'], $meta['per_page'],
                     $meta['current_page'], ['path' => route('loans.get', $id)]);
+            } else {
+                $message = 'Error with status: ' . $status;
             }
-            $message = 'Error with status: ' . $status;
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             if ($e->hasResponse()) {
                 $res = $e->getResponse();
@@ -66,10 +69,13 @@ class LoanController extends Controller
             \Log::error($e);
             $message = $e->getMessage();
         }
+        if ($message) {
+            $request->session()->flash('error', 'error');
+        }
         return View::make($this->toViewFullPath('get-loan'), [
             'client' => $client,
             'loans' => $loans,
-        ])->with('error', $message);
+        ]);
     }
 
     /**

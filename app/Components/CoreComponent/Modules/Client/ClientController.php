@@ -22,9 +22,11 @@ class ClientController extends Controller
      */
     public function getClient(Request $request)
     {
+        $request->session()->forget('error');
         $clients = new LengthAwarePaginator(new Collection(), 0, 1, null);
         $client = new \GuzzleHttp\Client();
         $url = config('app.api_url') . "/api/v1/clients/get";
+        $message = null;
         try {
             $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => [
@@ -45,8 +47,9 @@ class ClientController extends Controller
                 $meta = (array) $jsonResponse['meta'];
                 $clients = new LengthAwarePaginator($collection, $meta['total'], $meta['per_page'],
                     $meta['current_page'], ['path' => route('clients.get')]);
+            } else {
+                $message = 'Error with status: ' . $status;
             }
-            $message = 'Error with status: ' . $status;
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             if ($e->hasResponse()) {
                 $res = $e->getResponse();
@@ -58,9 +61,12 @@ class ClientController extends Controller
             \Log::error($e);
             $message = $e->getMessage();
         }
+        if ($message) {
+            $request->session()->flash('error', 'error');
+        }
         return View::make($this->toViewFullPath('get-client'), [
             'clients' => $clients,
-        ])->with('error', $message);
+        ]);
     }
 
     /**
