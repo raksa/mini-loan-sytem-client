@@ -104,10 +104,10 @@ class Loan
 
     public static function getFreqType(&$bag)
     {
-        $client = new \GuzzleHttp\Client();
+        $guzzleClient = new \GuzzleHttp\Client();
         $url = config('app.api_url') . "/api/v1/loans/get_freq_type";
         try {
-            $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
+            $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => [],
             ], 'json'));
             $status = $res->getStatusCode();
@@ -134,10 +134,10 @@ class Loan
 
     public static function getById(&$bag, $id)
     {
-        $client = new \GuzzleHttp\Client();
+        $guzzleClient = new \GuzzleHttp\Client();
         $url = config('app.api_url') . "/api/v1/loans/get/" . $id;
         try {
-            $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
+            $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => [],
             ], 'json'));
             $status = $res->getStatusCode();

@@ -73,10 +73,10 @@ class Client
 
     public static function getById(&$bag, $id)
     {
-        $client = new \GuzzleHttp\Client();
+        $guzzleClient = new \GuzzleHttp\Client();
         $url = config('app.api_url') . "/api/v1/clients/get/" . $id;
         try {
-            $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
+            $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => [],
             ], 'json'));
             $status = $res->getStatusCode();

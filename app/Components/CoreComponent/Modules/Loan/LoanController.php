@@ -25,19 +25,14 @@ class LoanController extends Controller
     {
         $request->session()->forget('error');
         $client = Client::getById($bag, $id);
-        if (!$client) {
-            $request->session()->flash('error', $bag['message']);
-            return View::make($this->toViewFullPath('get-loan'), [
-                'client' => null,
-            ]);
-        }
         $loans = new LengthAwarePaginator(new Collection(), 0, 1, null);
-        $client = new \GuzzleHttp\Client();
-        $url = config('app.api_url') . "/api/v1/loans/get/" . $id;
+        $guzzleClient = new \GuzzleHttp\Client();
+        $url = config('app.api_url') . "/api/v1/loans/get";
         $message = null;
         try {
-            $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
+            $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => [
+                    'clientId' => $id,
                     'perPage' => 20,
                     'page' => $request->input('page'),
                 ],
@@ -108,11 +103,13 @@ class LoanController extends Controller
      */
     public function doCreateLoan(Request $request, $id)
     {
-        $client = new \GuzzleHttp\Client();
-        $url = config('app.api_url') . "/api/v1/loans/create/" . $id;
+        $guzzleClient = new \GuzzleHttp\Client();
+        $url = config('app.api_url') . "/api/v1/loans/create";
         try {
-            $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
-                'json' => $request->except('_token'),
+            $data = $request->except('_token');
+            $data['clientId'] = $id;
+            $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
+                'json' => $data,
             ], 'json'));
             $status = $res->getStatusCode();
             if ($status == 200) {
@@ -127,9 +124,9 @@ class LoanController extends Controller
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             if ($e->hasResponse()) {
                 $res = $e->getResponse();
-                if ($res->getStatusCode() == 400) {
-                    $body = $res->getBody();
-                    $jsonResponse = \json_decode($body->getContents(), true);
+                $body = $res->getBody();
+                $jsonResponse = \json_decode($body->getContents(), true);
+                if ($jsonResponse && isset($jsonResponse['message'])) {
                     return back()->with('error', $jsonResponse['message'], [])->withInput();
                 }
             }

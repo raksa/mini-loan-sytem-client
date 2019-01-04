@@ -24,11 +24,11 @@ class ClientController extends Controller
     {
         $request->session()->forget('error');
         $clients = new LengthAwarePaginator(new Collection(), 0, 1, null);
-        $client = new \GuzzleHttp\Client();
+        $guzzleClient = new \GuzzleHttp\Client();
         $url = config('app.api_url') . "/api/v1/clients/get";
         $message = null;
         try {
-            $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
+            $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => [
                     'perPage' => 5,
                     'page' => $request->input('page'),
@@ -85,10 +85,10 @@ class ClientController extends Controller
      */
     public function doCreateClient(Request $request)
     {
-        $client = new \GuzzleHttp\Client();
+        $guzzleClient = new \GuzzleHttp\Client();
         $url = config('app.api_url') . "/api/v1/clients/create";
         try {
-            $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
+            $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => $request->except('_token'),
             ], 'json'));
             $status = $res->getStatusCode();
@@ -102,9 +102,9 @@ class ClientController extends Controller
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             if ($e->hasResponse()) {
                 $res = $e->getResponse();
-                if ($res->getStatusCode() == 400) {
-                    $body = $res->getBody();
-                    $jsonResponse = \json_decode($body->getContents(), true);
+                $body = $res->getBody();
+                $jsonResponse = \json_decode($body->getContents(), true);
+                if ($jsonResponse && isset($jsonResponse['message'])) {
                     $response = back()->with('error', $jsonResponse['message'], []);
                     if (isset($jsonResponse['errors'])) {
                         $errors = new MessageBag();

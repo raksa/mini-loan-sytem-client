@@ -43,10 +43,10 @@ class RepaymentController extends Controller
      */
     public function doPayRepayment(Request $request, $id)
     {
-        $client = new \GuzzleHttp\Client();
+        $guzzleClient = new \GuzzleHttp\Client();
         $url = config('app.api_url') . "/api/v1/repayments/pay/" . $id;
         try {
-            $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
+            $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => $request->except('_token'),
             ], 'json'));
             $status = $res->getStatusCode();
