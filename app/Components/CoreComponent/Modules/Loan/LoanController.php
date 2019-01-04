@@ -106,7 +106,7 @@ class LoanController extends Controller
         $url = config('app.api_url') . "/api/v1/loans/create/" . $id;
         try {
             $res = $client->request('POST', $url, Util::addAPIAuthorizationHash([
-                'json' => $request->all(),
+                'json' => $request->except('_token'),
             ], 'json'));
             $status = $res->getStatusCode();
             if ($status == 200) {
