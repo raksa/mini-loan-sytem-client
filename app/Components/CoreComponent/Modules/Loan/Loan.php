@@ -21,8 +21,8 @@ class Loan
     const REMARKS = 'remarks';
     const DATE_CONTRACT_START = 'date_contract_start';
     const DATE_CONTRACT_END = 'date_contract_end';
-    const LAST_UPDATED = 'last_updated';
-    const CREATED = 'created';
+    const UPDATED_AT = 'updated_at';
+    const CREATED_AT = 'created_at';
 
     public $repayments = [];
 
@@ -44,8 +44,8 @@ class Loan
         $this->{self::DATE_CONTRACT_START} = $data[self::DATE_CONTRACT_START];
         $endDate = $this->getDateContractStart()->copy()->addMonth($this->getMonthsDuration());
         $this->{self::DATE_CONTRACT_END} = $endDate;
-        $this->{self::LAST_UPDATED} = $data[self::LAST_UPDATED];
-        $this->{self::CREATED} = $data[self::CREATED];
+        $this->{self::UPDATED_AT} = $data[self::UPDATED_AT];
+        $this->{self::CREATED_AT} = $data[self::CREATED_AT];
     }
 
     public function getId()
@@ -95,11 +95,11 @@ class Loan
 
     public function getLastUpdatedTime()
     {
-        return new Carbon($this->{self::LAST_UPDATED});
+        return new Carbon($this->{self::UPDATED_AT});
     }
     public function getCreatedTime()
     {
-        return new Carbon($this->{self::CREATED});
+        return new Carbon($this->{self::CREATED_AT});
     }
 
     public static function getFreqType(&$bag)
