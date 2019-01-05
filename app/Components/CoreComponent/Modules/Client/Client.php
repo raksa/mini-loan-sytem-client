@@ -16,8 +16,8 @@ class Client
     const LAST_NAME = 'last_name';
     const PHONE_NUMBER = 'phone_number';
     const ADDRESS = 'address';
-    const LAST_UPDATED = 'last_updated';
-    const CREATED = 'created';
+    const UPDATED_AT = 'updated_at';
+    const CREATED_AT = 'created_at';
 
     public $loans = [];
 
@@ -34,8 +34,8 @@ class Client
         $this->{self::LAST_NAME} = $data[self::LAST_NAME];
         $this->{self::PHONE_NUMBER} = $data[self::PHONE_NUMBER];
         $this->{self::ADDRESS} = $data[self::ADDRESS];
-        $this->{self::LAST_UPDATED} = $data[self::LAST_UPDATED];
-        $this->{self::CREATED} = $data[self::CREATED];
+        $this->{self::UPDATED_AT} = $data[self::UPDATED_AT];
+        $this->{self::CREATED_AT} = $data[self::CREATED_AT];
     }
 
     public function getId()
@@ -64,11 +64,11 @@ class Client
     }
     public function getLastUpdatedTime()
     {
-        return new Carbon($this->{self::LAST_UPDATED});
+        return new Carbon($this->{self::UPDATED_AT});
     }
     public function getCreatedTime()
     {
-        return new Carbon($this->{self::CREATED});
+        return new Carbon($this->{self::CREATED_AT});
     }
 
     public static function getById(&$bag, $id)
