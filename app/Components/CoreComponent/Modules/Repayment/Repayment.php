@@ -19,8 +19,8 @@ class Repayment
     const DUE_DATE = 'due_date';
     const DATE_OF_PAYMENT = 'date_of_payment';
     const REMARKS = 'remarks';
-    const LAST_UPDATED = 'last_updated';
-    const CREATED = 'created';
+    const UPDATED_AT = 'updated_at';
+    const CREATED_AT = 'created_at';
 
     public $loan = null;
 
@@ -36,8 +36,8 @@ class Repayment
         $this->{self::DUE_DATE} = $data[self::DUE_DATE];
         $this->{self::DATE_OF_PAYMENT} = $data[self::DATE_OF_PAYMENT];
         $this->{self::REMARKS} = $data[self::REMARKS];
-        $this->{self::LAST_UPDATED} = $data[self::LAST_UPDATED];
-        $this->{self::CREATED} = $data[self::CREATED];
+        $this->{self::UPDATED_AT} = $data[self::UPDATED_AT];
+        $this->{self::CREATED_AT} = $data[self::CREATED_AT];
     }
 
     public function getId()
@@ -74,10 +74,10 @@ class Repayment
     }
     public function getLastUpdatedTime()
     {
-        return new Carbon($this->{self::LAST_UPDATED});
+        return new Carbon($this->{self::UPDATED_AT});
     }
     public function getCreatedTime()
     {
-        return new Carbon($this->{self::CREATED});
+        return new Carbon($this->{self::CREATED_AT});
     }
 }
