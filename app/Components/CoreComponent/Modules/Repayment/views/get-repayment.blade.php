@@ -8,14 +8,14 @@
 <h1>Get Repayment</h1>
 
 <a href="{{route('clients.create')}}">Go Create Client</a>
-&nbsp;&nbsp;<a href="{{route('clients.get')}}">Get Clients</a>
+&nbsp;&nbsp;<a href="{{route('clients.index')}}">Clients</a>
 &nbsp;&nbsp;<a href="/">Home</a>
 @if (isset($client))
-    &nbsp;&nbsp;<a href="{{route('loans.create', $client->getId())}}">Go Create Loan</a>
+    &nbsp;&nbsp;<a href="{{route('loans.create', $client->id)}}">Go Create Loan</a>
     <hr>
-    client code: {{$client->getClientCode()}}
+    client code: {{$client->client_code}}
     <br>
-    client name: {{$client->getFirstName()}} {{$client->getLastName()}}
+    client name: {{$client->first_name}} {{$client->last_name}}
     <hr>
 @endif
 @if (isset($loan))

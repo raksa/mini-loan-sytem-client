@@ -5,13 +5,11 @@
 
 @include('inc.flash')
 
-<h1>Get Clients</h1>
-
 <a href="{{route('clients.create')}}">Go Create Client</a>
 &nbsp;&nbsp;<a href="/">Home</a>
 
 <div>
-    <h1>Data</h1>
+    <h1>Clients</h1>
     <div>
         <table border="1">
             <thead>
@@ -32,19 +30,25 @@
             <tbody>
                 @foreach ($clients as $client)
                 <tr>
-                    <td>{{$client->getId()}}</td>
-                    <td>{{$client->getClientCode()}}</td>
-                    <td>{{$client->getFirstName()}}</td>
-                    <td>{{$client->getLastName()}}</td>
-                    <td>{{$client->getPhoneNumber()}}</td>
-                    <td>{{$client->getAddress()}}</td>
-                    <td>{{$client->getLastUpdatedTime()}}</td>
-                    <td>{{$client->getCreatedTime()}}</td>
+                    <td>{{$client->id}}</td>
+                    <td>{{$client->client_code}}</td>
+                    <td>{{$client->first_name}}</td>
+                    <td>{{$client->last_name}}</td>
+                    <td>{{$client->phone_number}}</td>
+                    <td>{{$client->address}}</td>
+                    <td>{{$client->updated_at . ''}}</td>
+                    <td>{{$client->created_at . ''}}</td>
                     <td>{{\count($client->loans)}}</td>
                     <td>
-                        <a href="{{route('loans.get', $client->getId())}}">Go Get Loans</a>
+                        <a href="{{route('clients.show', $client->id)}}">Show</a>
+                        <a href="{{route('clients.edit', $client->id)}}">Edit</a>
+                        {!! Form::open(['route' => ['clients.destroy', $client->id], 'method' => 'delete', 'class' => '']) !!}
+                            {!! Form::submit('Delete', ['class' => '']) !!}
+                        {!! Form::close() !!}
                         <br>
-                        <a href="{{route('loans.create', $client->getId())}}">Go Create Loan</a>
+                        <a href="{{route('loans.get', $client->id)}}">Go Get Loans</a>
+                        <br>
+                        <a href="{{route('loans.create', $client->id)}}">Go Create Loan</a>
                     </td>
                 </tr>
                 @endforeach

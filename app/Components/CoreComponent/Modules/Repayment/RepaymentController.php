@@ -26,7 +26,7 @@ class RepaymentController extends Controller
         $request->session()->forget('error');
         $loan = Loan::getById($bag, $id);
         if ($loan) {
-            $client = Client::getById($bag, $loan->getClientId());
+            $client = Client::find($loan->getClientId(), $bag);
             return $this->view('get-repayment', [
                 'client' => $client,
                 'loan' => $loan,

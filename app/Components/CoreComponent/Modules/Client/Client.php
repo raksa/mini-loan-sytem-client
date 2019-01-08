@@ -4,6 +4,9 @@ namespace App\Components\CoreComponent\Modules\Client;
 use App\Components\CoreComponent\Modules\Loan\Loan;
 use App\Helpers\Util;
 use Carbon\Carbon;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\MessageBag;
 
 // TODO: make good model pattern
 /*
@@ -11,68 +14,141 @@ use Carbon\Carbon;
  */
 class Client
 {
-    const ID = 'id';
-    const CLIENT_CODE = 'client_code'; //special string to make unique identify client
-    const FIRST_NAME = 'first_name';
-    const LAST_NAME = 'last_name';
-    const PHONE_NUMBER = 'phone_number';
-    const ADDRESS = 'address';
-    const UPDATED_AT = 'updated_at';
-    const CREATED_AT = 'created_at';
+    public $id;
+    public $client_code;
+    public $first_name;
+    public $last_name;
+    public $phone_number;
+    public $address;
+    public $updated_at;
+    public $created_at;
 
     public $loans = [];
 
-    public function __construct($data)
+    public function toArray()
+    {
+        $array = [
+            'id' => $this->id,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'phone_number' => $this->phone_number,
+            'address' => $this->address,
+            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at,
+        ];
+    }
+
+    public function fill($data = [])
     {
         if (isset($data['loans'])) {
             foreach ($data['loans'] as $loanData) {
                 $this->loans[] = new Loan($loanData);
             }
         }
-        $this->{self::ID} = $data[self::ID];
-        $this->{self::CLIENT_CODE} = $data[self::CLIENT_CODE];
-        $this->{self::FIRST_NAME} = $data[self::FIRST_NAME];
-        $this->{self::LAST_NAME} = $data[self::LAST_NAME];
-        $this->{self::PHONE_NUMBER} = $data[self::PHONE_NUMBER];
-        $this->{self::ADDRESS} = $data[self::ADDRESS];
-        $this->{self::UPDATED_AT} = $data[self::UPDATED_AT];
-        $this->{self::CREATED_AT} = $data[self::CREATED_AT];
+        isset($data['id']) && ($this->id = $data['id']);
+        isset($data['client_code']) && ($this->client_code = $data['client_code']);
+        $this->first_name = $data['first_name'];
+        $this->last_name = $data['last_name'];
+        $this->phone_number = $data['phone_number'];
+        $this->address = $data['address'];
+        if (isset($data['updated_at'])) {
+            $this->updated_at = new Carbon($data['updated_at']);
+        }
+        if (isset($data['created_at'])) {
+            $this->created_at = new Carbon($data['created_at']);
+        }
     }
 
-    public function getId()
+    public static function paginate(&$bag = [])
     {
-        return $this->{self::ID};
-    }
-    public function getClientCode()
-    {
-        return $this->{self::CLIENT_CODE};
-    }
-    public function getFirstName()
-    {
-        return $this->{self::FIRST_NAME};
-    }
-    public function getLastName()
-    {
-        return $this->{self::LAST_NAME};
-    }
-    public function getPhoneNumber()
-    {
-        return $this->{self::PHONE_NUMBER};
-    }
-    public function getAddress()
-    {
-        return $this->{self::ADDRESS};
-    }
-    public function getLastUpdatedTime()
-    {
-        return new Carbon($this->{self::UPDATED_AT});
-    }
-    public function getCreatedTime()
-    {
-        return new Carbon($this->{self::CREATED_AT});
+        $guzzleClient = new \GuzzleHttp\Client();
+        $url = config('app.api_url') . "/api/v1/clients/get";
+        $message = 'Unknown error';
+        try {
+            $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
+                'json' => [
+                    'perPage' => 5,
+                    'page' => request()->input('page'),
+                ],
+            ], 'json'));
+            $status = $res->getStatusCode();
+            if ($status == 200) {
+                $body = $res->getBody();
+                $jsonResponse = \json_decode($body->getContents(), true);
+                $data = $jsonResponse['data'];
+                $clientsArray = [];
+                foreach ($data as $clientData) {
+                    $client = new Client($clientData);
+                    $client->fill($clientData);
+                    $clientsArray[] = $client;
+                }
+                $collection = new Collection($clientsArray);
+                $meta = (array) $jsonResponse['meta'];
+                return new LengthAwarePaginator($collection, $meta['total'], $meta['per_page'],
+                    $meta['current_page'], ['path' => route('clients.index')]);
+            }
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $message = 'Exception occurred during payment';
+            if ($e->hasResponse()) {
+                $res = $e->getResponse();
+                $body = $res->getBody();
+                $jsonResponse = \json_decode($body->getContents());
+                if ($jsonResponse && isset($jsonResponse['message'])) {
+                    $message = $jsonResponse['message'];
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error($e);
+            $message = 'Exception occurred during payment';
+        }
+        $bag = ['message' => $message];
+        return new LengthAwarePaginator(new Collection(), 0, 1, null);
     }
 
-    public static function getById(&$bag, $id)
+    public function save(&$bag = [])
+    {
+        $guzzleClient = new \GuzzleHttp\Client();
+        $url = config('app.api_url') . "/api/v1/clients/create";
+        $message = 'Unknown error';
+        try {
+            $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
+                'json' => $this->toArray(),
+            ], 'json'));
+            $status = $res->getStatusCode();
+            $body = $res->getBody();
+            $jsonResponse = \json_decode($body->getContents(), true);
+            if ($jsonResponse && $jsonResponse["status"] == "success") {
+                $this->fill($jsonResponse['client']);
+                return true;
+            }
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $message = 'Exception occurred during request';
+            if ($e->hasResponse()) {
+                $res = $e->getResponse();
+                $body = $res->getBody();
+                $jsonResponse = \json_decode($body->getContents(), true);
+                if ($jsonResponse && isset($jsonResponse['message'])) {
+                    $response = back()->with('error', $jsonResponse['message'], []);
+                    if (isset($jsonResponse['errors'])) {
+                        $errors = new MessageBag();
+                        foreach ($jsonResponse['errors'] as $field => $messages) {
+                            foreach ($messages as $message) {
+                                $errors->add($field, $message);
+                            }
+                        }
+                        $bag['errors'] = $errors;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error($e);
+            $message = 'Exception occurred during request';
+        }
+        $bag['message'] = $message;
+        return false;
+    }
+
+    public static function find($id, &$bag = [])
     {
         $guzzleClient = new \GuzzleHttp\Client();
         $url = config('app.api_url') . "/api/v1/clients/get/" . $id;
@@ -86,7 +162,9 @@ class Client
                 $body = $res->getBody();
                 $jsonResponse = \json_decode($body->getContents(), true);
                 $data = $jsonResponse['data'];
-                return new self($data);
+                $client = new self();
+                $client->fill($data);
+                return $client;
             }
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             $message = 'Exception occurred during payment';
@@ -104,5 +182,45 @@ class Client
         }
         $bag = ['message' => $message];
         return null;
+    }
+
+    public function delete(&$bag = [])
+    {
+        $guzzleClient = new \GuzzleHttp\Client();
+        $url = config('app.api_url') . "/api/v1/clients/delete/" . $this->id;
+        $message = 'Unknown error';
+        try {
+            $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([], 'json'));
+            $status = $res->getStatusCode();
+            $body = $res->getBody();
+            $jsonResponse = \json_decode($body->getContents(), true);
+            if ($jsonResponse && $jsonResponse["status"] == "success") {
+                return true;
+            }
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $message = 'Exception occurred during request';
+            if ($e->hasResponse()) {
+                $res = $e->getResponse();
+                $body = $res->getBody();
+                $jsonResponse = \json_decode($body->getContents(), true);
+                if ($jsonResponse && isset($jsonResponse['message'])) {
+                    $response = back()->with('error', $jsonResponse['message'], []);
+                    if (isset($jsonResponse['errors'])) {
+                        $errors = new MessageBag();
+                        foreach ($jsonResponse['errors'] as $field => $messages) {
+                            foreach ($messages as $message) {
+                                $errors->add($field, $message);
+                            }
+                        }
+                        $bag['errors'] = $errors;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error($e);
+            $message = 'Exception occurred during request';
+        }
+        $bag['message'] = $message;
+        return false;
     }
 }

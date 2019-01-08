@@ -17,7 +17,7 @@
                     You are logged in!
 
                     <br>
-                    <a href="{{route('clients.get')}}">Get Clients</a>
+                    <a href="{{route('clients.index')}}">Clients</a>
                 </div>
             </div>
         </div>

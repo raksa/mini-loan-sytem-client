@@ -2,13 +2,9 @@
 
 namespace App\Components\CoreComponent\Modules\Client;
 
-use App\Helpers\Util;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\MessageBag;
 
 // TODO: make repository
 /*
@@ -16,116 +12,55 @@ use Illuminate\Support\MessageBag;
  */
 class ClientController extends Controller
 {
-    /**
-     * Create client
-     *
-     * @param \Illuminate\Http\Request $request
-     */
-    public function getClient(Request $request)
+    public function index(Request $request)
     {
-        $request->session()->forget('error');
-        $guzzleClient = new \GuzzleHttp\Client();
-        $url = config('app.api_url') . "/api/v1/clients/get";
-        $message = 'Unknown error';
-        try {
-            $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
-                'json' => [
-                    'perPage' => 5,
-                    'page' => $request->input('page'),
-                ],
-            ], 'json'));
-            $status = $res->getStatusCode();
-            if ($status == 200) {
-                $body = $res->getBody();
-                $jsonResponse = \json_decode($body->getContents(), true);
-                $data = $jsonResponse['data'];
-                $clientsArray = [];
-                foreach ($data as $clientData) {
-                    $clientsArray[] = new Client($clientData);
-                }
-                $collection = new Collection($clientsArray);
-                $meta = (array) $jsonResponse['meta'];
-                $clients = new LengthAwarePaginator($collection, $meta['total'], $meta['per_page'],
-                    $meta['current_page'], ['path' => route('clients.get')]);
-                return $this->view('get-client', [
-                    'clients' => $clients,
-                ]);
-            }
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            $message = 'Exception occurred during payment';
-            if ($e->hasResponse()) {
-                $res = $e->getResponse();
-                $body = $res->getBody();
-                $jsonResponse = \json_decode($body->getContents());
-                if ($jsonResponse && isset($jsonResponse['message'])) {
-                    $message = $jsonResponse['message'];
-                }
-            }
-        } catch (\Exception $e) {
-            \Log::error($e);
-            $message = 'Exception occurred during payment';
-        }
-        $request->session()->flash('error', $message);
-        return $this->view('get-client', [
-            'clients' => new LengthAwarePaginator(new Collection(), 0, 1, null),
+        $clients = Client::paginate();
+        return $this->view('index', [
+            'clients' => $clients,
         ]);
     }
-
-    /**
-     * Get create client view
-     *
-     * @param \Illuminate\Http\Request $request
-     */
-    public function createClient(Request $request)
+    public function create(Request $request)
     {
-        return $this->view('create-client');
+        return $this->view('create');
     }
-    /**
-     * Do creating clients
-     *
-     * @param \Illuminate\Http\Request $request
-     */
-    public function doCreateClient(Request $request)
+    public function store(Request $request)
     {
-        $guzzleClient = new \GuzzleHttp\Client();
-        $url = config('app.api_url') . "/api/v1/clients/create";
-        $message = 'Unknown error';
-        try {
-            $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
-                'json' => $request->except('_token'),
-            ], 'json'));
-            $status = $res->getStatusCode();
-            $body = $res->getBody();
-            $jsonResponse = \json_decode($body->getContents(), true);
-            if ($jsonResponse && $jsonResponse["status"] == "success") {
-                return $this->view('create-client', [
-                    'client' => new Client($jsonResponse['client']),
-                ]);
-            }
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            $message = 'Exception occurred during request';
-            if ($e->hasResponse()) {
-                $res = $e->getResponse();
-                $body = $res->getBody();
-                $jsonResponse = \json_decode($body->getContents(), true);
-                if ($jsonResponse && isset($jsonResponse['message'])) {
-                    $response = back()->with('error', $jsonResponse['message'], []);
-                    if (isset($jsonResponse['errors'])) {
-                        $errors = new MessageBag();
-                        foreach ($jsonResponse['errors'] as $field => $messages) {
-                            foreach ($messages as $message) {
-                                $errors->add($field, $message);
-                            }
-                        }
-                        $response->withErrors($errors);
-                    }
-                    return $response->withInput();
-                }
-            }
-        } catch (\Exception $e) {
-            \Log::error($e);
-            $message = 'Exception occurred during request';
+        $client = new Client();
+        $client->fill($request->except('_token'));
+        if ($client->save()) {
+            return redirect()->route('clients.index')->withSuccess('new client have been created');
         }
-        return back()->with('error', $message)->withInput();
+        return back()->withError("new client can't be created")->withInput();
+    }
+    public function show(Request $request, $id)
+    {
+        $client = Client::find($id);
+        return $this->view('show', [
+            'client' => $client,
+        ]);
+    }
+    public function edit(Request $request, $id)
+    {
+        $client = Client::find($id);
+        return $this->view('edit', [
+            'client' => $client,
+        ]);
+    }
+    public function update(Request $request, $id)
+    {
+        $client = Client::find($id);
+        $client->fill($request->all());
+        if ($client->save()) {
+            return redirect()->route('clients.index')->withSuccess('client have been updated');
+        }
+        return back()->withError("client can't be updated")->withInput();
+    }
+    public function destroy(Request $request, $id)
+    {
+        $client = Client::find($id);
+        if ($client->delete()) {
+            return redirect()->route('clients.index')->withSuccess('client have been deleted');
+        }
+        return back()->withError("client can't be deleted");
     }
 }

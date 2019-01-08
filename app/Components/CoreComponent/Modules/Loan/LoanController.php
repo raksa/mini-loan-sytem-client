@@ -25,7 +25,7 @@ class LoanController extends Controller
     public function getLoan(Request $request, $id)
     {
         $request->session()->forget('error');
-        $client = Client::getById($bag, $id);
+        $client = Client::find($id, $bag);
         if (!$client) {
             $request->session()->flash('error', $bag['message']);
             return $this->view('get-loan', [
@@ -91,7 +91,7 @@ class LoanController extends Controller
      */
     public function createLoan(Request $request, $id)
     {
-        $client = Client::getById($bag, $id);
+        $client = Client::find($id, $bag);
         if (!$client) {
             return $this->view('create-loan', [
                 'client' => null,
