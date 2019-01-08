@@ -1,9 +1,9 @@
-@extends('resources.views.layouts.default')
+@extends('layouts.default')
 @section('script')
 @stop
 @section('content')
 
-@include('resources.views.inc.flash')
+@include('inc.flash')
 
 <h1>Create Client</h1>
 <div>

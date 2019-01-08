@@ -29,5 +29,5 @@ if (\File::isDirectory($component_path)) {
 }
 
 Route::get('/', function () {
-    return view('resources.views.welcome');
+    return view('welcome');
 });

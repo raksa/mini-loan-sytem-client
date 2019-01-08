@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\View\Factory as ViewFactory;
 
 class Controller extends BaseController
 {
@@ -14,12 +15,12 @@ class Controller extends BaseController
     /**
      * View name to full path helper
      */
-    protected function toViewFullPath($viewName)
+    private function toViewFullPath($viewName)
     {
         $dir_path = \substr(\get_class($this), 0, \strrpos(\get_class($this), '\\'));
-        $get_path = \lcfirst(\str_replace("\\", ".", $dir_path));
-        $viewPath = $get_path . '.views.' . $viewName;
-        return $viewPath;
+        $get_path = \lcfirst(\str_replace("\\", DIRECTORY_SEPARATOR, $dir_path));
+        $viewPath = $get_path . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . $viewName . '.blade.php';
+        return base_path() . DIRECTORY_SEPARATOR . $viewPath;
     }
 
     /**
@@ -28,9 +29,10 @@ class Controller extends BaseController
      * @return string
      */
 
-    public function view($viewName, $data = [], $dataMerge = [])
+    public function view($viewName, $data = [], $mergeData = [])
     {
         $viewPath = $this->toViewFullPath($viewName);
-        return view($viewPath, $data, $dataMerge);
+        $factory = app(ViewFactory::class);
+        return $factory->file($viewPath, $data, $mergeData);
     }
 }
