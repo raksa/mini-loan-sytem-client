@@ -16,7 +16,9 @@
  * Author: Raksa Eng
  */
 
-Route::group(['middleware' => 'auth'], function () {
+Auth::routes(['verify' => true]);
+
+Route::group(['middleware' => ['auth', 'verified']], function () {
     $component_path = app_path() . DIRECTORY_SEPARATOR . "Components";
     if (\File::isDirectory($component_path)) {
         $list = \File::directories($component_path);
@@ -28,16 +30,7 @@ Route::group(['middleware' => 'auth'], function () {
             }
         }
     }
+    Route::get('/home', 'HomeController@index')->name('home');
 });
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
-
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
+Route::redirect('/', '/home');

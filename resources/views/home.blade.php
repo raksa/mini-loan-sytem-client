@@ -15,6 +15,9 @@
                     @endif
 
                     You are logged in!
+
+                    <br>
+                    <a href="{{route('clients.get')}}">Get Clients</a>
                 </div>
             </div>
         </div>
