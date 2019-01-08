@@ -6,6 +6,7 @@ use App\Components\CoreComponent\Modules\Repayment\RepaymentFrequency;
 use App\Helpers\Util;
 use Carbon\Carbon;
 
+// TODO: make good model pattern
 /*
  * Author: Raksa Eng
  */

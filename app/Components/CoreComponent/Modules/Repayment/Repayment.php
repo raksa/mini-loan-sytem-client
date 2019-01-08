@@ -4,6 +4,7 @@ namespace App\Components\CoreComponent\Modules\Repayment;
 use App\Components\CoreComponent\Modules\Loan\Loan;
 use Carbon\Carbon;
 
+// TODO: make good model pattern
 /*
  * Author: Raksa Eng
  */
