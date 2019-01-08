@@ -75,6 +75,7 @@ class Client
     {
         $guzzleClient = new \GuzzleHttp\Client();
         $url = config('app.api_url') . "/api/v1/clients/get/" . $id;
+        $message = 'Unknown error';
         try {
             $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => [],
@@ -86,17 +87,19 @@ class Client
                 $data = $jsonResponse['data'];
                 return new self($data);
             }
-            $message = 'Error with status: ' . $status;
         } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $message = 'Exception occurred during payment';
             if ($e->hasResponse()) {
                 $res = $e->getResponse();
                 $body = $res->getBody();
                 $jsonResponse = \json_decode($body->getContents());
-                $message = $jsonResponse['message'];
+                if ($jsonResponse && isset($jsonResponse['message'])) {
+                    $message = $jsonResponse['message'];
+                }
             }
         } catch (\Exception $e) {
             \Log::error($e);
-            $message = $e->getMessage();
+            $message = 'Exception occurred during payment';
         }
         $bag = ['message' => $message];
         return null;

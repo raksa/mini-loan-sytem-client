@@ -28,10 +28,9 @@ class Controller extends BaseController
      * @return string
      */
 
-    public function view($path)
+    public function view($viewName, $data = [], $dataMerge = [])
     {
-        $dir_path = \substr(\get_class($this), 0, \strrpos(\get_class($this), '\\'));
-        $get_path = \lcfirst(\str_replace("\\", ".", $dir_path));
-        return view($get_path . '.views.' . $path);
+        $viewPath = $this->toViewFullPath($viewName);
+        return view($viewPath, $data, $dataMerge);
     }
 }

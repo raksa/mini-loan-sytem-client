@@ -22,17 +22,19 @@ class RepaymentController extends Controller
      */
     public function getRepayment(Request $request, $id)
     {
+        $request->session()->forget('error');
         $loan = Loan::getById($bag, $id);
         if ($loan) {
             $client = Client::getById($bag, $loan->getClientId());
-            return View::make($this->toViewFullPath('get-repayment'), [
+            return $this->view('get-repayment', [
                 'client' => $client,
                 'loan' => $loan,
             ]);
         }
-        return View::make($this->toViewFullPath('get-repayment'), [
+        $request->session()->flash('error', $message);
+        return $this->view('get-repayment', [
             'loans' => null,
-        ])->with('error', $bag['message']);
+        ]);
     }
 
     /**
@@ -45,6 +47,7 @@ class RepaymentController extends Controller
     {
         $guzzleClient = new \GuzzleHttp\Client();
         $url = config('app.api_url') . "/api/v1/repayments/pay/" . $id;
+        $message = 'Unknown error';
         try {
             $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => $request->except('_token'),
@@ -56,16 +59,16 @@ class RepaymentController extends Controller
                 $repayment = new Repayment($jsonResponse['repayment']);
                 return back()->with('success', 'Success for repayment id:' . $repayment->getId());
             }
-            $message = 'Fail with status code ' . $status;
         } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $message = 'Exception occurred during payment';
             if ($e->hasResponse()) {
                 $res = $e->getResponse();
                 if ($res->getStatusCode() == 400) {
                     $body = $res->getBody();
                     $jsonResponse = \json_decode($body->getContents(), true);
-                    $message = $jsonResponse['message'];
-                } else {
-                    $message = 'Exception occurred during payment';
+                    if ($jsonResponse && isset($jsonResponse['message'])) {
+                        $message = $jsonResponse['message'];
+                    }
                 }
             }
         } catch (\Exception $e) {

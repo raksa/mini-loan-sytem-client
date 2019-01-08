@@ -25,10 +25,16 @@ class LoanController extends Controller
     {
         $request->session()->forget('error');
         $client = Client::getById($bag, $id);
-        $loans = new LengthAwarePaginator(new Collection(), 0, 1, null);
+        if (!$client) {
+            $request->session()->flash('error', $bag['message']);
+            return $this->view('get-loan', [
+                'client' => null,
+                'loans' => new LengthAwarePaginator(new Collection(), 0, 1, null),
+            ]);
+        }
         $guzzleClient = new \GuzzleHttp\Client();
         $url = config('app.api_url') . "/api/v1/loans/get";
-        $message = null;
+        $message = 'Unknown error';
         try {
             $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => [
@@ -50,26 +56,29 @@ class LoanController extends Controller
                 $meta = (array) $jsonResponse['meta'];
                 $loans = new LengthAwarePaginator($collection, $meta['total'], $meta['per_page'],
                     $meta['current_page'], ['path' => route('loans.get', $id)]);
-            } else {
-                $message = 'Error with status: ' . $status;
+                return $this->view('get-loan', [
+                    'client' => $client,
+                    'loans' => $loans,
+                ]);
             }
         } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $message = 'Exception occurred during payment';
             if ($e->hasResponse()) {
                 $res = $e->getResponse();
                 $body = $res->getBody();
                 $jsonResponse = \json_decode($body->getContents());
-                $message = $jsonResponse['message'];
+                if ($jsonResponse && isset($jsonResponse['message'])) {
+                    $message = $jsonResponse['message'];
+                }
             }
         } catch (\Exception $e) {
             \Log::error($e);
-            $message = $e->getMessage();
+            $message = 'Exception occurred during payment';
         }
-        if ($message) {
-            $request->session()->flash('error', 'error');
-        }
-        return View::make($this->toViewFullPath('get-loan'), [
+        $request->session()->flash('error', $message);
+        return $this->view('get-loan', [
             'client' => $client,
-            'loans' => $loans,
+            'loans' => new LengthAwarePaginator(new Collection(), 0, 1, null),
         ]);
     }
 
@@ -83,13 +92,12 @@ class LoanController extends Controller
     {
         $client = Client::getById($bag, $id);
         if (!$client) {
-            $request->session()->flash('error', $bag['message']);
-            return View::make($this->toViewFullPath('create-loan'), [
+            return $this->view('create-loan', [
                 'client' => null,
-            ]);
+            ])->with('error', $bag['message']);
         }
         $loan = $request->has('loanId') ? Loan::getById($bag, $request->get('loanId')) : null;
-        return View::make($this->toViewFullPath('create-loan'), [
+        return $this->view('create-loan', [
             'client' => $client,
             'loan' => $loan,
             'freqTypes' => Loan::getFreqType($bag),
@@ -105,6 +113,7 @@ class LoanController extends Controller
     {
         $guzzleClient = new \GuzzleHttp\Client();
         $url = config('app.api_url') . "/api/v1/loans/create";
+        $message = 'Unknown error';
         try {
             $data = $request->except('_token');
             $data['clientId'] = $id;
@@ -122,17 +131,19 @@ class LoanController extends Controller
                 ]);
             }
         } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $message = 'Exception occurred during payment';
             if ($e->hasResponse()) {
                 $res = $e->getResponse();
                 $body = $res->getBody();
                 $jsonResponse = \json_decode($body->getContents(), true);
                 if ($jsonResponse && isset($jsonResponse['message'])) {
-                    return back()->with('error', $jsonResponse['message'], [])->withInput();
+                    $message = $jsonResponse['message'];
                 }
             }
         } catch (\Exception $e) {
             \Log::error($e);
+            $message = 'Exception occurred during payment';
         }
-        return back()->with('error', 'Create fail')->withInput();
+        return back()->with('error', $message, [])->withInput();
     }
 }

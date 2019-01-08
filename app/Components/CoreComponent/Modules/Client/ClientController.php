@@ -23,10 +23,9 @@ class ClientController extends Controller
     public function getClient(Request $request)
     {
         $request->session()->forget('error');
-        $clients = new LengthAwarePaginator(new Collection(), 0, 1, null);
         $guzzleClient = new \GuzzleHttp\Client();
         $url = config('app.api_url') . "/api/v1/clients/get";
-        $message = null;
+        $message = 'Unknown error';
         try {
             $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => [
@@ -47,25 +46,27 @@ class ClientController extends Controller
                 $meta = (array) $jsonResponse['meta'];
                 $clients = new LengthAwarePaginator($collection, $meta['total'], $meta['per_page'],
                     $meta['current_page'], ['path' => route('clients.get')]);
-            } else {
-                $message = 'Error with status: ' . $status;
+                return $this->view('get-client', [
+                    'clients' => $clients,
+                ]);
             }
         } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $message = 'Exception occurred during payment';
             if ($e->hasResponse()) {
                 $res = $e->getResponse();
                 $body = $res->getBody();
                 $jsonResponse = \json_decode($body->getContents());
-                $message = $jsonResponse['message'];
+                if ($jsonResponse && isset($jsonResponse['message'])) {
+                    $message = $jsonResponse['message'];
+                }
             }
         } catch (\Exception $e) {
             \Log::error($e);
-            $message = $e->getMessage();
+            $message = 'Exception occurred during payment';
         }
-        if ($message) {
-            $request->session()->flash('error', 'error');
-        }
-        return View::make($this->toViewFullPath('get-client'), [
-            'clients' => $clients,
+        $request->session()->flash('error', $message);
+        return $this->view('get-client', [
+            'clients' => new LengthAwarePaginator(new Collection(), 0, 1, null),
         ]);
     }
 
@@ -76,7 +77,7 @@ class ClientController extends Controller
      */
     public function createClient(Request $request)
     {
-        return View::make($this->toViewFullPath('create-client'), []);
+        return $this->view('create-client');
     }
     /**
      * Do creating clients
@@ -87,6 +88,7 @@ class ClientController extends Controller
     {
         $guzzleClient = new \GuzzleHttp\Client();
         $url = config('app.api_url') . "/api/v1/clients/create";
+        $message = 'Unknown error';
         try {
             $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => $request->except('_token'),
@@ -95,11 +97,12 @@ class ClientController extends Controller
             $body = $res->getBody();
             $jsonResponse = \json_decode($body->getContents(), true);
             if ($jsonResponse && $jsonResponse["status"] == "success") {
-                return View::make($this->toViewFullPath('create-client'), [
+                return $this->view('create-client', [
                     'client' => new Client($jsonResponse['client']),
                 ]);
             }
         } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $message = 'Exception occurred during request';
             if ($e->hasResponse()) {
                 $res = $e->getResponse();
                 $body = $res->getBody();
@@ -120,7 +123,8 @@ class ClientController extends Controller
             }
         } catch (\Exception $e) {
             \Log::error($e);
+            $message = 'Exception occurred during request';
         }
-        return back()->with('error', 'Create fail', [])->withInput();
+        return back()->with('error', $message)->withInput();
     }
 }
