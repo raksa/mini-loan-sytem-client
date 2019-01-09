@@ -4,6 +4,7 @@
 @section('content')
 
 <div class="container">
+    {{ Breadcrumbs::render('loans') }}
     @include('inc.flash')
     <h2>Loans</h2>
     <div>

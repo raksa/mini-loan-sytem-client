@@ -22,3 +22,9 @@ Breadcrumbs::for('loan', function ($trail, $loan) {
     $trail->parent('client', $loan->client);
     $trail->push('loan:' . $loan->id, route('loans.show', $loan->id));
 });
+
+// Home > Clients
+Breadcrumbs::for('loans', function ($trail) {
+    $trail->parent('home');
+    $trail->push('Loans', route('loans.index'));
+});
