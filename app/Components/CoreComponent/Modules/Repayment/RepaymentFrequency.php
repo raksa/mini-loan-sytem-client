@@ -1,51 +1,43 @@
 <?php
 namespace App\Components\CoreComponent\Modules\Repayment;
 
+use App\Helpers\Util;
+
 /*
  * Author: Raksa Eng
  */
 class RepaymentFrequency
 {
-    const MONTHLY = [
-        'id' => 1,
-        'name' => 'monthly',
-        'description' => 'The most common repayment frequency',
-    ];
-    const FORTNIGHTLY = [
-        'id' => 2,
-        'name' => 'fortnightly',
-        'description' => 'Fortnightly repayment frequency',
-    ];
-    const WEEKLY = [
-        'id' => 3,
-        'name' => 'weekly',
-        'description' => 'Weekly repayment frequency',
-    ];
-
-    public static function isMonthly($typeId)
+    public static function getFreqType(&$bag = [])
     {
-        return $typeId == self::MONTHLY['id'];
-    }
-    public static function isFortnightly($typeId)
-    {
-        return $typeId == self::FORTNIGHTLY['id'];
-    }
-    public static function isWeekly($typeId)
-    {
-        return $typeId == self::WEEKLY['id'];
-    }
-
-    public static function getRepaymentFrequencyTypeName($typeId)
-    {
-        switch ($typeId) {
-            case self::MONTHLY['id']:
-                return self::MONTHLY['name'];
-            case self::FORTNIGHTLY['id']:
-                return self::FORTNIGHTLY['name'];
-            case self::WEEKLY['id']:
-                return self::WEEKLY['name'];
-            default:
-                return 'Unknown';
+        $guzzleClient = new \GuzzleHttp\Client();
+        $url = config('app.api_url') . "/api/v1/loans/get_freq_type";
+        $message = 'Unknown error';
+        try {
+            $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
+                'json' => [],
+            ], 'json'));
+            $status = $res->getStatusCode();
+            if ($status == 200) {
+                $body = $res->getBody();
+                $jsonResponse = \json_decode($body->getContents(), true);
+                return $jsonResponse['types'];
+            }
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $message = 'Exception occurred during payment';
+            if ($e->hasResponse()) {
+                $res = $e->getResponse();
+                $body = $res->getBody();
+                $jsonResponse = \json_decode($body->getContents());
+                if ($jsonResponse && isset($jsonResponse['message'])) {
+                    $message = $jsonResponse['message'];
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error($e);
+            $message = 'Exception occurred during payment';
         }
+        $bag = ['message' => $message];
+        return [];
     }
 }

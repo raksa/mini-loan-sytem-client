@@ -3,11 +3,9 @@
 namespace App\Components\CoreComponent\Modules\Loan;
 
 use App\Components\CoreComponent\Modules\Client\Client;
-use App\Helpers\Util;
+use App\Components\CoreComponent\Modules\Repayment\RepaymentFrequency;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 
 // TODO: make repository
@@ -16,135 +14,64 @@ use Illuminate\Support\Facades\View;
  */
 class LoanController extends Controller
 {
-    /**
-     * Create loan
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Components\CoreComponent\Modules\Client\Client::ID $id
-     */
-    public function getLoan(Request $request, $id)
+    public function index(Request $request)
     {
-        $request->session()->forget('error');
-        $client = Client::find($id, $bag);
-        if (!$client) {
-            $request->session()->flash('error', $bag['message']);
-            return $this->view('get-loan', [
-                'client' => null,
-                'loans' => new LengthAwarePaginator(new Collection(), 0, 1, null),
-            ]);
-        }
-        $guzzleClient = new \GuzzleHttp\Client();
-        $url = config('app.api_url') . "/api/v1/loans/get";
-        $message = 'Unknown error';
-        try {
-            $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
-                'json' => [
-                    'clientId' => $id,
-                    'perPage' => 20,
-                    'page' => $request->input('page'),
-                ],
-            ], 'json'));
-            $status = $res->getStatusCode();
-            $body = $res->getBody();
-            $jsonResponse = \json_decode($body->getContents(), true);
-            if ($jsonResponse) {
-                $data = $jsonResponse['data'];
-                $loansArray = [];
-                foreach ($data as $loanData) {
-                    $loansArray[] = new Loan($loanData);
-                }
-                $collection = new Collection($loansArray);
-                $meta = (array) $jsonResponse['meta'];
-                $loans = new LengthAwarePaginator($collection, $meta['total'], $meta['per_page'],
-                    $meta['current_page'], ['path' => route('loans.get', $id)]);
-                return $this->view('get-loan', [
-                    'client' => $client,
-                    'loans' => $loans,
-                ]);
-            }
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            $message = 'Exception occurred during payment';
-            if ($e->hasResponse()) {
-                $res = $e->getResponse();
-                $body = $res->getBody();
-                $jsonResponse = \json_decode($body->getContents());
-                if ($jsonResponse && isset($jsonResponse['message'])) {
-                    $message = $jsonResponse['message'];
-                }
-            }
-        } catch (\Exception $e) {
-            \Log::error($e);
-            $message = 'Exception occurred during payment';
-        }
-        $request->session()->flash('error', $message);
-        return $this->view('get-loan', [
+        $client = Client::find($request->get('client_id'));
+        $loans = Loan::ofClient($client->id)->paginate();
+        return $this->view('index', [
             'client' => $client,
-            'loans' => new LengthAwarePaginator(new Collection(), 0, 1, null),
+            'loans' => $loans,
         ]);
     }
-
-    /**
-     * Get create loan view
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Components\CoreComponent\Modules\Client\Client::ID $id
-     */
-    public function createLoan(Request $request, $id)
+    public function create(Request $request)
     {
-        $client = Client::find($id, $bag);
-        if (!$client) {
-            return $this->view('create-loan', [
-                'client' => null,
-            ])->with('error', $bag['message']);
-        }
-        $loan = $request->has('loanId') ? Loan::getById($bag, $request->get('loanId')) : null;
-        return $this->view('create-loan', [
+        $client = Client::find($request->get('client_id'));
+        $freqTypes = RepaymentFrequency::getFreqType();
+        return $this->view('create', [
+            'freqTypes' => $freqTypes,
             'client' => $client,
+        ]);
+    }
+    public function store(Request $request)
+    {
+        $loan = new Loan();
+        $loan->fill($request->except('_token'));
+        if ($loan->save()) {
+            return redirect()->route('loans.index', ['client_id' => $loan->client_id])->withSuccess('new loan have been created');
+        }
+        return back()->withError("new loan can't be created")->withInput();
+    }
+    public function show(Request $request, $id)
+    {
+        $loan = Loan::find($id);
+        return $this->view('show', [
             'loan' => $loan,
-            'freqTypes' => Loan::getFreqType($bag),
         ]);
     }
-    /**
-     * Do creating loans
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Components\CoreComponent\Modules\Client\Client::ID $id
-     */
-    public function doCreateLoan(Request $request, $id)
+    public function edit(Request $request, $id)
     {
-        $guzzleClient = new \GuzzleHttp\Client();
-        $url = config('app.api_url') . "/api/v1/loans/create";
-        $message = 'Unknown error';
-        try {
-            $data = $request->except('_token');
-            $data['clientId'] = $id;
-            $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
-                'json' => $data,
-            ], 'json'));
-            $status = $res->getStatusCode();
-            if ($status == 200) {
-                $body = $res->getBody();
-                $jsonResponse = \json_decode($body->getContents(), true);
-                $loan = new Loan($jsonResponse['loan']);
-                return redirect()->route('loans.create', [
-                    'id' => $id,
-                    'loanId' => $loan->getId(),
-                ]);
-            }
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            $message = 'Exception occurred during payment';
-            if ($e->hasResponse()) {
-                $res = $e->getResponse();
-                $body = $res->getBody();
-                $jsonResponse = \json_decode($body->getContents(), true);
-                if ($jsonResponse && isset($jsonResponse['message'])) {
-                    $message = $jsonResponse['message'];
-                }
-            }
-        } catch (\Exception $e) {
-            \Log::error($e);
-            $message = 'Exception occurred during payment';
+        $freqTypes = RepaymentFrequency::getFreqType();
+        $loan = Loan::find($id);
+        return $this->view('edit', [
+            'freqTypes' => $freqTypes,
+            'loan' => $loan,
+        ]);
+    }
+    public function update(Request $request, $id)
+    {
+        $loan = Loan::find($id);
+        $loan->fill($request->all());
+        if ($loan->save()) {
+            return redirect()->route('loans.index', ['client_id' => $loan->client_id])->withSuccess('loan have been updated');
         }
-        return back()->with('error', $message, [])->withInput();
+        return back()->withError("loan can't be updated")->withInput();
+    }
+    public function destroy(Request $request, $id)
+    {
+        $loan = Loan::find($id);
+        if ($loan->delete()) {
+            return redirect()->route('loans.index')->withSuccess('loan have been deleted');
+        }
+        return back()->withError("loan can't be deleted");
     }
 }

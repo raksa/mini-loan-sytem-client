@@ -46,9 +46,9 @@
                             {!! Form::submit('Delete', ['class' => '']) !!}
                         {!! Form::close() !!}
                         <br>
-                        <a href="{{route('loans.get', $client->id)}}">Go Get Loans</a>
+                        <a href="{{route('loans.index', ['client_id' => $client->id])}}">Loans</a>
                         <br>
-                        <a href="{{route('loans.create', $client->id)}}">Go Create Loan</a>
+                        <a href="{{route('loans.create', ['client_id' => $client->id])}}">Create Loan</a>
                     </td>
                 </tr>
                 @endforeach

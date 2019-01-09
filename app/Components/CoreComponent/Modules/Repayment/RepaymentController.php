@@ -19,14 +19,14 @@ class RepaymentController extends Controller
      * Create loan
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Components\CoreComponent\Modules\Loan\Loan::ID $id
+     * @param \App\Components\CoreComponent\Modules\Loan\Loan::id $id
      */
     public function getRepayment(Request $request, $id)
     {
         $request->session()->forget('error');
-        $loan = Loan::getById($bag, $id);
+        $loan = Loan::find($id, $bag);
         if ($loan) {
-            $client = Client::find($loan->getClientId(), $bag);
+            $client = Client::find($loan->client_id, $bag);
             return $this->view('get-repayment', [
                 'client' => $client,
                 'loan' => $loan,

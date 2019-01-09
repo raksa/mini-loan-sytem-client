@@ -33,7 +33,7 @@
                     <td>{{$client->created_at . ''}}</td>
                     <td>
                         <a href="{{route('clients.edit', $client->id)}}">Edit</a>
-                        <a href="{{route('loans.create', $client->id)}}">Go Create Loan</a>
+                        <a href="{{route('loans.create', ['client_id' => $client->id])}}">Go Create Loan</a>
                     </td>
                 </tr>
             </tbody>

@@ -11,7 +11,7 @@
 &nbsp;&nbsp;<a href="{{route('clients.index')}}">Clients</a>
 &nbsp;&nbsp;<a href="/">Home</a>
 @if (isset($client))
-    &nbsp;&nbsp;<a href="{{route('loans.create', $client->id)}}">Go Create Loan</a>
+    &nbsp;&nbsp;<a href="{{route('loans.create', ['client_id' => $client->id])}}">Go Create Loan</a>
     <hr>
     client code: {{$client->client_code}}
     <br>
@@ -41,19 +41,25 @@
             <tbody>
                 @foreach ($loans as $loan)
                 <tr>
-                    <td>{{$loan->getId()}}</td>
-                    <td>${{$loan->getAmount()}}</td>
-                    <td>{{$loan->getMonthsDuration()}}months</td>
-                    <td>{{$loan->getRepaymentFrequencyType()}}</td>
-                    <td>{{$loan->getMonthlyInterestRate()}}%</td>
-                    <td>${{$loan->getArrangementFee()}}</td>
-                    <td>{{$loan->getRemarks()}}</td>
-                    <td>{{$loan->getDateContractStart()}}</td>
-                    <td>{{$loan->getDateContractEnd()}}</td>
-                    <td>{{$loan->getLastUpdatedTime()}}</td>
-                    <td>{{$loan->getCreatedTime()}}</td>
+                    <td>{{$loan->id}}</td>
+                    <td>${{$loan->amount}}</td>
+                    <td>{{$loan->duration}}months</td>
+                    <td>{{$loan->repayment_frequency}}</td>
+                    <td>{{$loan->interest_rate}}%</td>
+                    <td>${{$loan->arrangement_fee}}</td>
+                    <td>{{$loan->remarks}}</td>
+                    <td>{{$loan->date_contract_start}}</td>
+                    <td>{{$loan->date_contract_end}}</td>
+                    <td>{{$loan->updated_at}}</td>
+                    <td>{{$loan->created_at}}</td>
                     <td>
-                        <a href="{{route('repayments.get', $loan->getId())}}">Get Repayment</a>
+                        <a href="{{route('loans.show', $loan->id)}}">Show</a>
+                        <a href="{{route('loans.edit', $loan->id)}}">Edit</a>
+                        {!! Form::open(['route' => ['loans.destroy', $loan->id], 'method' => 'delete', 'class' => '']) !!}
+                            {!! Form::submit('Delete', ['class' => '']) !!}
+                        {!! Form::close() !!}
+                        <br>
+                        <a href="{{route('repayments.get', $loan->id)}}">Get Repayment</a>
                     </td>
                 </tr>
                 @endforeach
