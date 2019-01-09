@@ -1,14 +1,13 @@
-@extends('layouts.default')
+@extends('layouts.app')
 @section('script')
 @stop
 @section('content')
 
-@include('inc.flash')
-
-<div>
+<div class="container">
+    @include('inc.flash')
     <h2>Clients</h2>
     <div>
-        <table border="1">
+        <table class="table table-striped able-bordered">
             <thead>
                 <tr>
                     <th>id</th>

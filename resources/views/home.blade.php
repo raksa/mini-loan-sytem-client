@@ -13,9 +13,6 @@
                             {{ session('status') }}
                         </div>
                     @endif
-
-                    You are logged in!
-
                     <br>
                     <a href="{{route('clients.index')}}">Clients</a>
                     <br>

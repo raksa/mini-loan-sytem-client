@@ -29,6 +29,6 @@ All required environment variables can be found in .env.example
 MIT
 
 ## TODO
+* change remarks to WYSIWYG html
 * access control
 * test case
-* change remarks to WYSIWYG html
