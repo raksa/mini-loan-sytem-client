@@ -4,6 +4,7 @@
 @section('content')
 
 <div class="container">
+    {{ Breadcrumbs::render('client', $client) }}
     @include('inc.flash')
     <h2>Client</h2>
     <div>

@@ -22,14 +22,14 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>{{$client->id}}</td>
-                    <td>{{$client->client_code}}</td>
-                    <td>{{$client->first_name}}</td>
-                    <td>{{$client->last_name}}</td>
-                    <td>{{$client->phone_number}}</td>
-                    <td>{{$client->address}}</td>
-                    <td>{{$client->updated_at . ''}}</td>
-                    <td>{{$client->created_at . ''}}</td>
+                    <td>{{$loan->client->id}}</td>
+                    <td>{{$loan->client->client_code}}</td>
+                    <td>{{$loan->client->first_name}}</td>
+                    <td>{{$loan->client->last_name}}</td>
+                    <td>{{$loan->client->phone_number}}</td>
+                    <td>{{$loan->client->address}}</td>
+                    <td>{{$loan->client->updated_at . ''}}</td>
+                    <td>{{$loan->client->created_at . ''}}</td>
                 </tr>
             </tbody>
         </table>

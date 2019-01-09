@@ -42,21 +42,17 @@ class LoanController extends Controller
     public function show(Request $request, $id)
     {
         $loan = Loan::find($id);
-        $client = Client::find($loan->client_id);
         return $this->view('show', [
             'loan' => $loan,
-            'client' => $client,
         ]);
     }
     public function edit(Request $request, $id)
     {
         $freqTypes = RepaymentFrequency::getFreqType();
         $loan = Loan::find($id);
-        $client = Client::find($loan->client_id);
         return $this->view('edit', [
             'freqTypes' => $freqTypes,
             'loan' => $loan,
-            'client' => $client,
         ]);
     }
     public function update(Request $request, $id)

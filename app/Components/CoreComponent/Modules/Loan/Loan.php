@@ -29,6 +29,7 @@ class Loan
     public $created_at;
 
     public $repayments = [];
+    public $client = null;
 
     public function toArray()
     {
@@ -56,6 +57,11 @@ class Loan
                 $repayment->fill($repaymentData);
                 $this->repayments[] = $repayment;
             }
+        }
+        if (isset($data['loans'])) {
+            $client = new Client();
+            $client->fill($data['loans']);
+            $this->client = $client;
         }
         isset($data['id']) && ($this->id = $data['id']);
         $this->client_id = $data['client_id'];
@@ -168,6 +174,8 @@ class Loan
             $jsonResponse = \json_decode($body->getContents(), true);
             $data = $jsonResponse['data'];
             $loan = new self();
+            $client = Client::find($data['client_id']);
+            $data['loans'] = $client->toArray();
             $loan->fill($data);
             return $loan;
         } catch (\GuzzleHttp\Exception\ClientException $e) {

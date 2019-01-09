@@ -5,13 +5,7 @@
 
 <div class="container">
     @include('inc.flash')
-    <h2>Clients</h2>
-    @if (isset($client))
-        client code: {{$client->client_code}}
-        <br>
-        client name: {{$client->first_name}} {{$client->last_name}}
-        <hr>
-    @endif
+    <h2>Loans</h2>
     <div>
         <table class="table table-striped able-bordered">
             <thead>
