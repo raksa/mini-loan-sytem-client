@@ -27,14 +27,14 @@ class Client
 
     public function toArray()
     {
-        $array = [
+        return [
             'id' => $this->id,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'phone_number' => $this->phone_number,
             'address' => $this->address,
-            'updated_at' => $this->updated_at,
-            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at . '',
+            'created_at' => $this->created_at . '',
         ];
     }
 
@@ -71,22 +71,19 @@ class Client
                     'page' => request()->input('page'),
                 ],
             ], 'json'));
-            $status = $res->getStatusCode();
-            if ($status == 200) {
-                $body = $res->getBody();
-                $jsonResponse = \json_decode($body->getContents(), true);
-                $data = $jsonResponse['data'];
-                $clientsArray = [];
-                foreach ($data as $clientData) {
-                    $client = new Client($clientData);
-                    $client->fill($clientData);
-                    $clientsArray[] = $client;
-                }
-                $collection = new Collection($clientsArray);
-                $meta = (array) $jsonResponse['meta'];
-                return new LengthAwarePaginator($collection, $meta['total'], $meta['per_page'],
-                    $meta['current_page'], ['path' => route('clients.index')]);
+            $body = $res->getBody();
+            $jsonResponse = \json_decode($body->getContents(), true);
+            $data = $jsonResponse['data'];
+            $clientsArray = [];
+            foreach ($data as $clientData) {
+                $client = new Client($clientData);
+                $client->fill($clientData);
+                $clientsArray[] = $client;
             }
+            $collection = new Collection($clientsArray);
+            $meta = (array) $jsonResponse['meta'];
+            return new LengthAwarePaginator($collection, $meta['total'], $meta['per_page'],
+                $meta['current_page'], ['path' => route('clients.index')]);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             $message = 'Exception occurred during payment';
             if ($e->hasResponse()) {
@@ -114,7 +111,6 @@ class Client
             $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => $this->toArray(),
             ], 'json'));
-            $status = $res->getStatusCode();
             $body = $res->getBody();
             $jsonResponse = \json_decode($body->getContents(), true);
             if ($jsonResponse && $jsonResponse["status"] == "success") {
@@ -157,15 +153,12 @@ class Client
             $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => [],
             ], 'json'));
-            $status = $res->getStatusCode();
-            if ($status == 200) {
-                $body = $res->getBody();
-                $jsonResponse = \json_decode($body->getContents(), true);
-                $data = $jsonResponse['data'];
-                $client = new self();
-                $client->fill($data);
-                return $client;
-            }
+            $body = $res->getBody();
+            $jsonResponse = \json_decode($body->getContents(), true);
+            $data = $jsonResponse['data'];
+            $client = new self();
+            $client->fill($data);
+            return $client;
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             $message = 'Exception occurred during payment';
             if ($e->hasResponse()) {
@@ -191,7 +184,6 @@ class Client
         $message = 'Unknown error';
         try {
             $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([], 'json'));
-            $status = $res->getStatusCode();
             $body = $res->getBody();
             $jsonResponse = \json_decode($body->getContents(), true);
             if ($jsonResponse && $jsonResponse["status"] == "success") {
