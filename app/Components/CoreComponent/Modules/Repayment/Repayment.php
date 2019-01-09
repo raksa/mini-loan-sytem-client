@@ -2,6 +2,7 @@
 namespace App\Components\CoreComponent\Modules\Repayment;
 
 use App\Components\CoreComponent\Modules\Loan\Loan;
+use App\Helpers\Util;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -33,7 +34,7 @@ class Repayment
         isset($data['id']) && ($this->id = $data['id']);
         $this->loan_id = $data['loan_id'];
         $this->amount = $data['amount'];
-        $this->payment_status = RepaymentStatus::getPaymentStatusName($data['date_of_payment']);
+        $this->payment_status = RepaymentStatus::getPaymentStatusName($data['payment_status']);
         $this->due_date = $data['due_date'];
         $this->date_of_payment = $data['date_of_payment'];
         $this->remarks = $data['remarks'];

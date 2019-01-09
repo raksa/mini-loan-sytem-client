@@ -17,10 +17,8 @@ class LoanController extends Controller
 {
     public function index(Request $request)
     {
-        $client = Client::find($request->get('client_id'));
-        $loans = Loan::ofClient($client->id)->paginate();
+        $loans = Loan::paginate();
         return $this->view('index', [
-            'client' => $client,
             'loans' => $loans,
         ]);
     }
@@ -38,24 +36,28 @@ class LoanController extends Controller
         $loan = new Loan();
         $loan->fill($request->except('_token'));
         if ($loan->save()) {
-            return redirect()->route('loans.index', ['client_id' => $loan->client_id])->withSuccess('new loan have been created');
+            return redirect()->route('clients.show', $loan->client_id)->withSuccess('new loan have been created');
         }
         return back()->withError("new loan can't be created")->withInput();
     }
     public function show(Request $request, $id)
     {
         $loan = Loan::find($id);
+        $client = Client::find($loan->client_id);
         return $this->view('show', [
             'loan' => $loan,
+            'client' => $client,
         ]);
     }
     public function edit(Request $request, $id)
     {
         $freqTypes = RepaymentFrequency::getFreqType();
         $loan = Loan::find($id);
+        $client = Client::find($loan->client_id);
         return $this->view('edit', [
             'freqTypes' => $freqTypes,
             'loan' => $loan,
+            'client' => $client,
         ]);
     }
     public function update(Request $request, $id)
@@ -63,7 +65,7 @@ class LoanController extends Controller
         $loan = Loan::find($id);
         $loan->fill($request->all());
         if ($loan->save()) {
-            return redirect()->route('loans.index', ['client_id' => $loan->client_id])->withSuccess('loan have been updated');
+            return redirect()->route('clients.show', $loan->client_id)->withSuccess('loan have been updated');
         }
         return back()->withError("loan can't be updated")->withInput();
     }

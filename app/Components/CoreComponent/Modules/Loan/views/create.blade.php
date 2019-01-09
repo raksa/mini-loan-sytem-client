@@ -6,6 +6,36 @@
 @include('inc.flash')
 
 <div>
+    <h2>Client</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>client code</th>
+                <th>first name</th>
+                <th>last name</th>
+                <th>phone number</th>
+                <th>address</th>
+                <th>last updated</th>
+                <th>created</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{$client->id}}</td>
+                <td>{{$client->client_code}}</td>
+                <td>{{$client->first_name}}</td>
+                <td>{{$client->last_name}}</td>
+                <td>{{$client->phone_number}}</td>
+                <td>{{$client->address}}</td>
+                <td>{{$client->updated_at . ''}}</td>
+                <td>{{$client->created_at . ''}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div>
+    <h2>Create Loan</h2>
     {!! Form::open(['route' => 'loans.store', 'method' => 'post', 'class' => '']) !!}
         <input type="hidden" name="client_id" value="{{$client->id}}">
         <div>
@@ -50,6 +80,5 @@
 </div>
 <hr>
 <a href="/">Home</a>
-&nbsp;&nbsp;<a href="{{route('clients.index')}}">Clients</a>
 &nbsp;&nbsp;<a href="{{route('loans.index', ['client_id' => $client->id])}}">Loans</a>
 @stop

@@ -5,7 +5,7 @@
 
 @include('inc.flash')
 
-<h1>Update Client</h1>
+<h2>Edit Client</h2>
 <div>
     @if ($client)
         {!! Form::open(['route' => ['clients.update', $client->id], 'method' => 'patch', 'class' => '']) !!}

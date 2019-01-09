@@ -18,6 +18,8 @@
 
                     <br>
                     <a href="{{route('clients.index')}}">Clients</a>
+                    <br>
+                    <a href="{{route('loans.index')}}">Loans</a>
                 </div>
             </div>
         </div>

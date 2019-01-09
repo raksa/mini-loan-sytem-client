@@ -5,11 +5,8 @@
 
 @include('inc.flash')
 
-<a href="{{route('clients.create')}}">Go Create Client</a>
-&nbsp;&nbsp;<a href="/">Home</a>
-
 <div>
-    <h1>Clients</h1>
+    <h2>Clients</h2>
     <div>
         <table border="1">
             <thead>
@@ -46,8 +43,6 @@
                             {!! Form::submit('Delete', ['class' => '']) !!}
                         {!! Form::close() !!}
                         <br>
-                        <a href="{{route('loans.index', ['client_id' => $client->id])}}">Loans</a>
-                        <br>
                         <a href="{{route('loans.create', ['client_id' => $client->id])}}">Create Loan</a>
                     </td>
                 </tr>
@@ -57,4 +52,7 @@
         {{$clients->links()}}
     </div>
 </div>
+<hr>
+&nbsp;&nbsp;<a href="/">Home</a>
+<a href="{{route('clients.create')}}">Create Client</a>
 @stop

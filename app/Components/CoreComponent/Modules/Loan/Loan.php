@@ -79,13 +79,7 @@ class Loan
         }
     }
 
-    public static function ofClient($client_id)
-    {
-        $loan = new self();
-        $loan->client_id = $client_id;
-        return $loan;
-    }
-    public function paginate(&$bag = [])
+    public static function paginate(&$bag = [])
     {
         $guzzleClient = new \GuzzleHttp\Client();
         $url = config('app.api_url') . "/api/v1/loans/get";
@@ -93,7 +87,6 @@ class Loan
         try {
             $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => [
-                    'client_id' => $this->client_id,
                     'perPage' => 20,
                     'page' => request()->input('page'),
                 ],

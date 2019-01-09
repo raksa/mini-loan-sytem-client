@@ -5,7 +5,7 @@
 
 @include('inc.flash')
 
-<h1>Create Client</h1>
+<h2>Edit Client</h2>
 <div>
     {!! Form::open(['route' => 'clients.store', 'method' => 'post', 'class' => '']) !!}
         <div>
