@@ -8,9 +8,13 @@ Client interface implement to work with mini-loan-system api https://github.com/
 
 ## Install Dependencies for Development
 * `$ composer install`
+* `$ npm install`
+* `$ npm run dev`
 
 ## Install Dependencies for Production
 * `$ composer install --no-dev`
+* `$ npm install`
+* `$ npm run dev`
 
 ## Migrate Database for very first time (after create database time)
 attention: this will remove everything in database
