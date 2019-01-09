@@ -52,7 +52,9 @@ class Loan
     {
         if (isset($data['repayments'])) {
             foreach ($data['repayments'] as $repaymentData) {
-                $this->repayments[] = new Repayment($repaymentData);
+                $repayment = new Repayment();
+                $repayment->fill($repaymentData);
+                $this->repayments[] = $repayment;
             }
         }
         isset($data['id']) && ($this->id = $data['id']);

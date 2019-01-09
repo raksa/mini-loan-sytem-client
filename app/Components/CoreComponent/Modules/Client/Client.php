@@ -42,7 +42,9 @@ class Client
     {
         if (isset($data['loans'])) {
             foreach ($data['loans'] as $loanData) {
-                $this->loans[] = new Loan($loanData);
+                $loan = new Loan();
+                $loan->fill($loanData);
+                $this->loans[] = $loan;
             }
         }
         isset($data['id']) && ($this->id = $data['id']);

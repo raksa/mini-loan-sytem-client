@@ -25,10 +25,12 @@ class Repayment
 
     public $loan = null;
 
-    public function __construct($data)
+    public function fill($data)
     {
         if (isset($data['loan'])) {
-            $this->loan = new Loan($data['loan']);
+            $loan = new Loan();
+            $loan->fill($data['loan']);
+            $this->loan = $loan;
         }
         $this->{self::ID} = $data[self::ID];
         $this->{self::LOAN_ID} = $data[self::LOAN_ID];
