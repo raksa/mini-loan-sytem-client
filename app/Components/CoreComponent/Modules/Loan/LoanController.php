@@ -3,6 +3,7 @@
 namespace App\Components\CoreComponent\Modules\Loan;
 
 use App\Components\CoreComponent\Modules\Client\Client;
+use App\Components\CoreComponent\Modules\Repayment\Repayment;
 use App\Components\CoreComponent\Modules\Repayment\RepaymentFrequency;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -73,5 +74,13 @@ class LoanController extends Controller
             return redirect()->route('loans.index')->withSuccess('loan have been deleted');
         }
         return back()->withError("loan can't be deleted");
+    }
+
+    public function pay(Request $request, $id)
+    {
+        if (Repayment::pay($id)) {
+            return back()->withSuccess("repayment id $id has been paid");
+        }
+        return back()->withError("paid fail for repayment id $id");
     }
 }

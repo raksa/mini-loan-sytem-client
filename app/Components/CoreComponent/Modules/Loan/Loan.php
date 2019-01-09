@@ -214,7 +214,7 @@ class Loan
                 $body = $res->getBody();
                 $jsonResponse = \json_decode($body->getContents(), true);
                 if ($jsonResponse && isset($jsonResponse['message'])) {
-                    $response = back()->with('error', $jsonResponse['message'], []);
+                    $response = back()->withError($jsonResponse['message'], []);
                     if (isset($jsonResponse['errors'])) {
                         $errors = new MessageBag();
                         foreach ($jsonResponse['errors'] as $field => $messages) {

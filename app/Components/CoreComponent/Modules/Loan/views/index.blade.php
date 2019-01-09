@@ -58,8 +58,6 @@
                         {!! Form::open(['route' => ['loans.destroy', $loan->id], 'method' => 'delete', 'class' => '']) !!}
                             {!! Form::submit('Delete', ['class' => '']) !!}
                         {!! Form::close() !!}
-                        <br>
-                        <a href="{{route('repayments.get', $loan->id)}}">Get Repayment</a>
                     </td>
                 </tr>
                 @endforeach

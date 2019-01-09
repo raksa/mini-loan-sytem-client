@@ -7,7 +7,7 @@
 
 <div>
     @if (isset($loan))
-        <h2 style="color: green">Created Loan</h2>
+        <h2 style="color: green">Loan</h2>
         <table border="1">
             <thead>
                 <tr>
@@ -38,10 +38,43 @@
                     <td>{{$loan->date_contract_end}}</td>
                     <td>{{$loan->updated_at}}</td>
                     <td>{{$loan->created_at}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <h2>Repayments</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>amount</th>
+                    <th>payment status</th>
+                    <th>due date</th>
+                    <th>date of payment</th>
+                    <th>remarks</th>
+                    <th>last updated</th>
+                    <th>created</th>
+                    <th>action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($loan->repayments as $repayment)
+                <tr>
+                    <td>{{$repayment->id}}</td>
+                    <td>${{$repayment->amount}}</td>
+                    <td>{{$repayment->payment_status}}</td>
+                    <td>{{$repayment->due_date . ''}}</td>
+                    <td>{{$repayment->date_of_payment . ''}}</td>
+                    <td>{{$repayment->remarks}}</td>
+                    <td>{{$repayment->last_updated_time . ''}}</td>
+                    <td>{{$repayment->created_time}}</td>
                     <td>
-                        <a href="{{route('repayments.get', $loan->id)}}">Get Repayment</a>
+                        {!! Form::open(['route' => ['loans.pay', $repayment->id], 'method' => 'post', 'class' => '']) !!}
+                            {!! Form::submit('Pay', ['class' => '']) !!}
+                            <input type="text" name="remarks" placeholder="remarks">
+                        {!! Form::close() !!}
                     </td>
                 </tr>
+                @endforeach
             </tbody>
         </table>
     @endif

@@ -17,12 +17,9 @@ class RepaymentFrequency
             $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([
                 'json' => [],
             ], 'json'));
-            $status = $res->getStatusCode();
-            if ($status == 200) {
-                $body = $res->getBody();
-                $jsonResponse = \json_decode($body->getContents(), true);
-                return $jsonResponse['types'];
-            }
+            $body = $res->getBody();
+            $jsonResponse = \json_decode($body->getContents(), true);
+            return $jsonResponse['types'];
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             $message = 'Exception occurred during payment';
             if ($e->hasResponse()) {
