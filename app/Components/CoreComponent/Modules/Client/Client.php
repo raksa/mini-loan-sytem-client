@@ -8,7 +8,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\MessageBag;
 
-// TODO: make good model pattern
+// TODO: make delete and update
 /*
  * Author: Raksa Eng
  */

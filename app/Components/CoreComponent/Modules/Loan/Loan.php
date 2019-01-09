@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
-// TODO: make good model pattern
+// TODO: make delete and update
 /*
  * Author: Raksa Eng
  */

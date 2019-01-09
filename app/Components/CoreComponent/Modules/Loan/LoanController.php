@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
-// TODO: make repository
 /*
  * Author: Raksa Eng
  */

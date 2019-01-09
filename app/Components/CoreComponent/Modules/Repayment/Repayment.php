@@ -6,7 +6,6 @@ use App\Helpers\Util;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
-// TODO: make good model pattern
 /*
  * Author: Raksa Eng
  */
