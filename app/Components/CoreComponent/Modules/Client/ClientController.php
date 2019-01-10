@@ -2,6 +2,7 @@
 
 namespace App\Components\CoreComponent\Modules\Client;
 
+use App\Components\CoreComponent\Modules\Loan\Loan;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
@@ -11,18 +12,26 @@ use Illuminate\Support\Facades\View;
  */
 class ClientController extends Controller
 {
+    protected function getRequiredData()
+    {
+        return [
+            'loanModelClass' => Loan::class,
+            'clientModelClass' => Client::class,
+        ];
+    }
+
     public function index(Request $request)
     {
         $this->authorize('view', Client::class);
         $clients = Client::paginate();
         return $this->view('index', [
             'clients' => $clients,
-        ]);
+        ], $this->getRequiredData());
     }
     public function create(Request $request)
     {
         $this->authorize('create', Client::class);
-        return $this->view('create');
+        return $this->view('create', $this->getRequiredData());
     }
     public function store(Request $request)
     {
@@ -40,7 +49,7 @@ class ClientController extends Controller
         $this->authorize('view', Client::class);
         return $this->view('show', [
             'client' => $client,
-        ]);
+        ], $this->getRequiredData());
     }
     public function edit(Request $request, $id)
     {
@@ -48,7 +57,7 @@ class ClientController extends Controller
         $this->authorize('update', $client);
         return $this->view('edit', [
             'client' => $client,
-        ]);
+        ], $this->getRequiredData());
     }
     public function update(Request $request, $id)
     {

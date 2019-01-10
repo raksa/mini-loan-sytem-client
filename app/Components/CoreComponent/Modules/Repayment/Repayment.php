@@ -15,6 +15,7 @@ class Repayment
     public $loan_id;
     public $amount;
     public $payment_status;
+    public $is_paid;
     public $due_date;
     public $date_of_payment;
     public $remarks;
@@ -34,6 +35,7 @@ class Repayment
         $this->loan_id = $data['loan_id'];
         $this->amount = $data['amount'];
         $this->payment_status = RepaymentStatus::getPaymentStatusName($data['payment_status']);
+        $this->is_paid = RepaymentStatus::isUnpaid($data['payment_status']);
         $this->due_date = $data['due_date'];
         $this->date_of_payment = $data['date_of_payment'];
         $this->remarks = $data['remarks'];
@@ -78,16 +80,19 @@ class Repayment
         return null;
     }
 
-    public static function pay($repaymentId)
+    public function pay()
     {
         $guzzleClient = new \GuzzleHttp\Client();
-        $url = config('app.api_url') . "/api/v1/repayments/pay/" . $repaymentId;
+        $url = config('app.api_url') . "/api/v1/repayments/pay/" . $this->id;
         $message = 'Unknown error';
         try {
             $res = $guzzleClient->request('POST', $url, Util::addAPIAuthorizationHash([], 'json'));
             $body = $res->getBody();
             $jsonResponse = \json_decode($body->getContents(), true);
-            return $jsonResponse && $jsonResponse["status"] == "success";
+            if ($jsonResponse && $jsonResponse["status"] == "success") {
+                $this->fill($jsonResponse["repayment"]);
+                return true;
+            }
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             $message = 'Exception occurred during payment';
             if ($e->hasResponse()) {

@@ -25,13 +25,13 @@ class Role
     public $editor = [
         'id' => 'editor',
         'name' => 'Editor',
-        'can' => ['view', 'update', 'delete', 'restore'],
+        'can' => ['view', 'update', 'delete', 'restore', 'pay'],
         'description' => '',
     ];
     public $administrator = [
         'id' => 'administrator',
         'name' => 'Administrator',
-        'can' => ['view', 'create', 'update', 'delete', 'restore', 'forceDelete'],
+        'can' => ['view', 'create', 'update', 'delete', 'restore', 'forceDelete', 'pay'],
         'description' => '',
     ];
 

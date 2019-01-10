@@ -4,10 +4,11 @@
 @section('content')
 
 <div class="container">
+    {{ Breadcrumbs::render('client', $client) }}
     @include('inc.flash')
     <h2>Edit Client</h2>
-    <div>
-        @if ($client)
+    @can('update', $client)
+        <div>
             {!! Form::open(['route' => ['clients.update', $client->id], 'method' => 'patch', 'class' => '']) !!}
                 <div>
                     <label for="client_code">Cient Code:</label>
@@ -33,12 +34,7 @@
                     {!! Form::submit('Update', ['class' => '']) !!}
                 </div>
             {!! Form::close() !!}
-        @else
-            <h3>Client not found</h3>
-        @endif
-    </div>
+        </div>
+    @endcan
 </div>
-<hr>
-<a href="/">Home</a>
-&nbsp;&nbsp;<a href="{{route('clients.index')}}">Clients</a>
 @stop

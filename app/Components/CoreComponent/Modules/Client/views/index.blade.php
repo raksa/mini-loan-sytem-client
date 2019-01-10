@@ -8,7 +8,7 @@
     @include('inc.flash')
     <h2>Clients</h2>
     <div>
-        @can('view', $modelClass)
+        @can('view', $clientModelClass)
             <table class="table table-striped able-bordered">
                 <thead>
                     <tr>
@@ -42,25 +42,26 @@
                             @can('update', $client)
                                 <a href="{{route('clients.edit', $client->id)}}">Edit</a>
                             @endcan
-                            @can('forceDelete', $client)
+                            @can('delete', $client)
                                 {!! Form::open(['route' => ['clients.destroy', $client->id], 'method' => 'delete', 'class' => '']) !!}
                                     {!! Form::submit('Delete', ['class' => '']) !!}
                                 {!! Form::close() !!}
                             @endcan
-                            <br>
-                            <a href="{{route('loans.create', ['client_id' => $client->id])}}">Create Loan</a>
+                            @can('cteate', $loanModelClass)
+                                <br>
+                                <a href="{{route('loans.create', ['client_id' => $client->id])}}">Create Loan</a>
+                            @endcan
                         </td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
             {{$clients->links()}}
+            <hr>
+            @can('create', $clientModelClass)
+                <a href="{{route('clients.create')}}">Create Client</a>
+            @endcan
         @endcan
     </div>
 </div>
-<hr>
-&nbsp;&nbsp;<a href="/">Home</a>
-@can('create', $modelClass)
-    <a href="{{route('clients.create')}}">Create Client</a>
-@endcan
 @stop
