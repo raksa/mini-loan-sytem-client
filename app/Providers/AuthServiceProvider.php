@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Helpers\ModuleHelper;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -26,6 +27,8 @@ class AuthServiceProvider extends ServiceProvider
         }
         $this->registerPolicies();
 
-        //
+        foreach (ModuleHelper::getRouteBaseNamePolicyClasses() as $routeBaseName => $policyClass) {
+            // Gate::resource($routeBaseName, $policyClass);
+        }
     }
 }

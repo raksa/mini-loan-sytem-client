@@ -13,6 +13,7 @@ class ClientController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('view', Client::class);
         $clients = Client::paginate();
         return $this->view('index', [
             'clients' => $clients,
@@ -20,10 +21,12 @@ class ClientController extends Controller
     }
     public function create(Request $request)
     {
+        $this->authorize('create', Client::class);
         return $this->view('create');
     }
     public function store(Request $request)
     {
+        $this->authorize('create', Client::class);
         $client = new Client();
         $client->fill($request->except('_token'));
         if ($client->save()) {
@@ -34,6 +37,7 @@ class ClientController extends Controller
     public function show(Request $request, $id)
     {
         $client = Client::find($id);
+        $this->authorize('view', Client::class);
         return $this->view('show', [
             'client' => $client,
         ]);
@@ -41,6 +45,7 @@ class ClientController extends Controller
     public function edit(Request $request, $id)
     {
         $client = Client::find($id);
+        $this->authorize('update', $client);
         return $this->view('edit', [
             'client' => $client,
         ]);
@@ -48,6 +53,7 @@ class ClientController extends Controller
     public function update(Request $request, $id)
     {
         $client = Client::find($id);
+        $this->authorize('update', $client);
         $client->fill($request->all());
         if ($client->save()) {
             return redirect()->route('clients.index')->withSuccess('client have been updated');
@@ -57,6 +63,7 @@ class ClientController extends Controller
     public function destroy(Request $request, $id)
     {
         $client = Client::find($id);
+        $this->authorize('delete', $client);
         if ($client->delete()) {
             return redirect()->route('clients.index')->withSuccess('client have been deleted');
         }

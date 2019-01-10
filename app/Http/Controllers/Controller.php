@@ -7,6 +7,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Illuminate\View\Factory as ViewFactory;
 
 class Controller extends BaseController
@@ -15,7 +16,6 @@ class Controller extends BaseController
 
     public function __construct()
     {
-        $this->authorizeResource($this->getModelClass());
     }
 
     /**
@@ -57,6 +57,19 @@ class Controller extends BaseController
         $nameSpace = \substr($controllerClass, 0, \strrpos($controllerClass, '\\'));
         $modelClass = $nameSpace . \substr($nameSpace, \strrpos($nameSpace, '\\'));
         return $modelClass;
+    }
+
+    /**
+     * Get model class
+     *
+     * @return string
+     */
+    private function getRouteBaseName()
+    {
+        $controllerClass = \get_class($this);
+        $nameSpace = \substr($controllerClass, 0, \strrpos($controllerClass, '\\'));
+        $moduleName = \substr($nameSpace, \strrpos($nameSpace, '\\') + 1);
+        return \strtolower($moduleName) . 's';
     }
 
     /**

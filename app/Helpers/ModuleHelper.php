@@ -48,25 +48,46 @@ class ModuleHelper
         return $class ? $namespace . '\\' . $class : null;
     }
 
-    public static function getModelPolicyClasses()
+    public static function getModuleDirs()
     {
-        $modulePolicies = [];
         $componentPath = app_path() . DIRECTORY_SEPARATOR . "Components";
         if (File::isDirectory($componentPath)) {
             $components = File::directories($componentPath);
             foreach ($components as $component) {
                 $modules = File::directories($component . DIRECTORY_SEPARATOR . 'Modules');
                 foreach ($modules as $module) {
-                    $policyFile = $module . DIRECTORY_SEPARATOR . File::basename($module) . 'Policy.php';
-                    $modelFile = $module . DIRECTORY_SEPARATOR . File::basename($module) . '.php';
-                    if (File::isFile($policyFile) && ($policyClass = static::getClassFromFile($policyFile)) &&
-                        File::isFile($modelFile) && ($moduleClass = static::getClassFromFile($modelFile))
-                    ) {
-                        $modulePolicies[$moduleClass] = $policyClass;
-                    }
+                    yield $module;
                 }
             }
         }
+    }
+
+    public static function getModelPolicyClasses()
+    {
+        $modulePolicies = [];
+        foreach (static::getModuleDirs() as $module) {
+            $modelBaseName = File::basename($module);
+            $policyFile = $module . DIRECTORY_SEPARATOR . $modelBaseName . 'Policy.php';
+            $modelFile = $module . DIRECTORY_SEPARATOR . $modelBaseName . '.php';
+            if (File::isFile($policyFile) && ($policyClass = static::getClassFromFile($policyFile)) &&
+                File::isFile($modelFile) && ($moduleClass = static::getClassFromFile($modelFile))
+            ) {
+                $modulePolicies[$moduleClass] = $policyClass;
+            }
+        }
         return $modulePolicies;
+    }
+
+    public static function getRouteBaseNamePolicyClasses()
+    {
+        $routeBaseNamePolicies = [];
+        foreach (static::getModuleDirs() as $module) {
+            $modelBaseName = File::basename($module);
+            $policyFile = $module . DIRECTORY_SEPARATOR . $modelBaseName . 'Policy.php';
+            if (File::isFile($policyFile) && ($policyClass = static::getClassFromFile($policyFile))) {
+                $routeBaseNamePolicies[\strtolower($modelBaseName) . 's'] = $policyClass;
+            }
+        }
+        return $routeBaseNamePolicies;
     }
 }
