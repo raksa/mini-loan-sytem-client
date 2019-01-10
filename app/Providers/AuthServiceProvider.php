@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Gate;
+use App\Helpers\ModuleHelper;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -12,9 +12,7 @@ class AuthServiceProvider extends ServiceProvider
      *
      * @var array
      */
-    protected $policies = [
-        'App\Model' => 'App\Policies\ModelPolicy',
-    ];
+    protected $policies = [];
 
     /**
      * Register any authentication / authorization services.
@@ -23,6 +21,9 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        foreach (ModuleHelper::getModelPolicyClasses() as $modelClass => $policyClass) {
+            $this->policies[$modelClass] = $policyClass;
+        }
         $this->registerPolicies();
 
         //
