@@ -26,20 +26,14 @@ class UsersTableSeeder extends Seeder
         $user->email_verified_at = now();
         $user->save();
 
-        $roles = [
-            'subscriber',
-            'contributor',
-            'author',
-            'editor',
-        ];
-        foreach ($roleModel->toOption() as $roleId => $roleName) {
+        foreach ($roleModel->toOption() as $roleId => $role) {
             if ($roleModel->isAdministrator($roleId)) {
                 continue;
             }
             $user = new User();
             $user->fill([
                 'role' => $roleId,
-                'name' => $roleName,
+                'name' => $role['name'],
                 'email' => "$roleId@local",
                 'password' => bcrypt('123456'),
             ]);
