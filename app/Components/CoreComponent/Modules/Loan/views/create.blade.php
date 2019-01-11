@@ -1,6 +1,23 @@
 @extends('layouts.app')
-@section('script')
+
+@section('style')
+<link href="{{ asset('summernote/summernote-lite.css') }}" rel="stylesheet">
 @stop
+
+@section('script')
+<script src="{{ asset('jquery/dist/jquery.js') }}"></script>
+<script src="{{ asset('summernote/summernote-lite.js') }}"></script>
+<script>
+$(document).ready(function() {
+    $('#remarks').summernote({
+        placeholder: 'Remarks',
+        tabsize: 2,
+        height: 100
+    });
+});
+</script>
+@stop
+
 @section('content')
 
 <div class="container">
@@ -66,15 +83,15 @@
                 $<input id="arrangement_fee" name="arrangement_fee" type="number" value="10" required>
             </div>
             <div>
-                <label for="remarks">Remarks:</label>
-                <input id="remarks" name="remarks" type="text" value="this is remarks">
-            </div>
-            <div>
                 <label for="date_contract_start">Date Contract Start:</label>
                 <input id="date_contract_start" name="date_contract_start" type="date"
                     min="{{Carbon\Carbon::now()->format('Y-m-d')}}"
                     max="{{Carbon\Carbon::now()->addYear(50)->format('Y-m-d')}}"
                     value="{{Carbon\Carbon::now()->format('Y-m-d')}}">
+            </div>
+            <div>
+                <label for="remarks">Remarks:</label>
+                <textarea id="remarks" name="remarks"></textarea>
             </div>
             <div>
                 {!! Form::submit('Create', ['class' => '']) !!}

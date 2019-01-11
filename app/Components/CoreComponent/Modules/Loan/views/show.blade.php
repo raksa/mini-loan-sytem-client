@@ -61,7 +61,7 @@
                             <td>{{$loan->repayment_frequency}}</td>
                             <td>{{$loan->interest_rate}}%</td>
                             <td>${{$loan->arrangement_fee}}</td>
-                            <td>{{$loan->remarks}}</td>
+                            <td>{!!$loan->remarks!!}</td>
                             <td>{{$loan->date_contract_start}}</td>
                             <td>{{$loan->date_contract_end}}</td>
                             <td>{{$loan->updated_at}}</td>
@@ -94,7 +94,7 @@
                             <td>{{$repayment->payment_status}}</td>
                             <td>{{$repayment->due_date . ''}}</td>
                             <td>{{$repayment->date_of_payment . ''}}</td>
-                            <td>{{$repayment->remarks}}</td>
+                            <td>{!!$repayment->remarks!!}</td>
                             <td>{{$repayment->updated_at . ''}}</td>
                             <td>{{$repayment->created_at}}</td>
                             <td>

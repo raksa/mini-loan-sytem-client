@@ -64,7 +64,7 @@
                                 <td>{{$loan->repayment_frequency}}</td>
                                 <td>{{$loan->interest_rate}}%</td>
                                 <td>${{$loan->arrangement_fee}}</td>
-                                <td>{{$loan->remarks}}</td>
+                                <td>{!!$loan->remarks!!}</td>
                                 <td>{{$loan->date_contract_start}}</td>
                                 <td>{{$loan->date_contract_end}}</td>
                                 <td>{{$loan->updated_at}}</td>
