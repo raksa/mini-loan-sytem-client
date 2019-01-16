@@ -5,7 +5,7 @@
 @stop
 
 @section('script')
-<script src="{{ asset('jquery/dist/jquery.js') }}"></script>
+<script src="{{ asset('js/jquery/jquery.js') }}"></script>
 <script src="{{ asset('summernote/summernote-lite.js') }}"></script>
 <script>
 $(document).ready(function() {
